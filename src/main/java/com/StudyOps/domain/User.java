@@ -14,5 +14,4 @@ public class User {
     @JoinColumn(name = "user_id")
     private Long id;
     private String nickname;
-    private String password;
 }
