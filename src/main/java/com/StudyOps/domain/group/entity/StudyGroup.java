@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class StudyGroup {
     @Id @GeneratedValue
     @Column(name = "study_group_id")

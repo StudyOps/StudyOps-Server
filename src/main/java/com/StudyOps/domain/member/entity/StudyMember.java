@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class StudyMember {
     @Id @GeneratedValue
     @Column(name = "study_member_id")

@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class StudyBoard {
     @Id
     @GeneratedValue

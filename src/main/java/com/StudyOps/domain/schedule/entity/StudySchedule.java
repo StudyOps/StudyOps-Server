@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class StudySchedule {
     @Id
     @GeneratedValue
