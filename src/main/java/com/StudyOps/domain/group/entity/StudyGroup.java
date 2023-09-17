@@ -1,5 +1,6 @@
 package com.StudyOps.domain.group.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,19 +13,20 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class StudyGroup {
     @Id @GeneratedValue
     @Column(name = "study_group_id")
     private Long id;
     private String name;
+    private String intro;
     private String rule;
-    private int absentPenalty;
-    private int latePenalty;
-    private int totalPenalty;
+    private LocalDate startDate;
+    private int absenceCost;
+    private int lateCost;
+    private int totalCost;
+    private int allowedTime;
     private String account;
     private int headCount;
-    private LocalDate startDate;
     private String hostName;
-    private int allowedTime;
-    private String intro;
 }
