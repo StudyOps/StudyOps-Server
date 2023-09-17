@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class StudyGroupCreateController {
+public class StudyGroupController {
 
     private final StudyGroupService studyGroupService;
     @PostMapping("/groups/{userId}")

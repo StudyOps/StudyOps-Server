@@ -13,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 public class InvitedMember {
     @Id @GeneratedValue
     @Column(name = "invited_member_id")
