@@ -8,11 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class StudyMember {
     @Id @GeneratedValue
     @Column(name = "study_member_id")
@@ -27,4 +29,5 @@ public class StudyMember {
     private StudyGroup studyGroup;
     private Boolean hostStatus;
     private int totalPenalty;
+    private LocalDate joinDate;
 }
