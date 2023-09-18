@@ -19,9 +19,7 @@ public class StudyPenaltyService {
 
     public void deleteStudyMember(StudyMember studyMember){
         List<StudyPenalty> penalties = studyPenaltyRepository.findAllByStudyMember(studyMember);
-        for(int i=0; i<penalties.size(); i++){
-            StudyPenalty penalty = penalties.get(i);
-            studyPenaltyRepository.delete(penalty);
-        }
+        penalties.stream()
+                .forEach(penalty -> studyPenaltyRepository.delete(penalty));
     }
 }

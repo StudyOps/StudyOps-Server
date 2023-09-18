@@ -20,9 +20,7 @@ public class StudyAttendanceService {
 
     public void deleteStudyMember(StudyMember studyMember){
         List<StudyAttendance> attendances = studyAttendanceRepository.findAllByStudyMember(studyMember);
-        for(int i=0; i<attendances.size(); i++){
-           StudyAttendance studyAttendance = attendances.get(i);
-           studyAttendanceRepository.delete(studyAttendance);
-        }
+        attendances.stream()
+                .forEach(attendance -> studyAttendanceRepository.delete(attendance));
     }
 }
