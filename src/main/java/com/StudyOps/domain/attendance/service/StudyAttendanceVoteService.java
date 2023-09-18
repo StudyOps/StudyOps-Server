@@ -18,9 +18,7 @@ public class StudyAttendanceVoteService {
     private final StudyAttendanceVoteRepository studyAttendanceVoteRepository;
     public void deleteStudyMember(StudyMember studyMember){
         List<StudyAttendanceVote> attendanceVotes = studyAttendanceVoteRepository.findAllByStudyMember(studyMember);
-        for(int i=0; i<attendanceVotes.size(); i++){
-            StudyAttendanceVote studyAttendanceVote = attendanceVotes.get(i);
-            studyAttendanceVoteRepository.delete(studyAttendanceVote);
-        }
+        attendanceVotes.stream()
+                .forEach(attendanceVote -> studyAttendanceVoteRepository.delete(attendanceVote));
     }
 }
