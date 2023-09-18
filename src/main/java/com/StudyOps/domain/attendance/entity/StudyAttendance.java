@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class StudyAttendance {
     @Id @GeneratedValue
     @Column(name = "study_attendance_id")

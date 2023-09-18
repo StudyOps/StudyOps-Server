@@ -25,7 +25,7 @@ public class InvitedMemberService {
         //스트림과 맵을 활용하여 리스트 invitees에 있는 닉네임을 userRepository에서 조회후 invitedMember로 디비에 등록한다.
         invitees.stream()
                 .map(nickname -> {
-                    User findUser = userRepository.findByNickname(nickname);
+                    User findUser = userRepository.findByNickname(nickname).get();
                     InvitedMember invitedMember = InvitedMember.builder()
                             .user(findUser)
                             .studyGroup(studyGroup)
