@@ -29,4 +29,8 @@ public class StudyGroup {
     private String account;
     private int headCount;
     private String hostName;
+
+    public void decreaseHeadCount(){
+        headCount--;
+    }
 }

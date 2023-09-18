@@ -24,4 +24,14 @@ public class StudyGroupController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
     }
+
+    @DeleteMapping("/groups/{groupId}/{userId}")
+    public ResponseEntity<ApiResponse<Object>> quitStudyGroup(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId){
+
+        studyGroupService.quitStudyGroup(groupId,userId);
+
+        ApiResponse<Object> successResponse = new ApiResponse<>(ApiResponseStatus.STUDY_GROUP_QUIT_SUCCESS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
 }
