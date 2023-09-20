@@ -2,7 +2,7 @@ package com.StudyOps.domain.group.service;
 
 import com.StudyOps.domain.attendance.service.StudyAttendanceService;
 import com.StudyOps.domain.attendance.service.StudyAttendanceVoteService;
-import com.StudyOps.domain.group.dto.StudyGroupCreateReqDto;
+import com.StudyOps.domain.group.dto.StudyGroupReqDto;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,22 +54,22 @@ public class StudyGroupService {
         userRepository.save(user4);
     }
 
-    public void createStudyGroup(Long userId, StudyGroupCreateReqDto studyGroupCreateReqDto) {
+    public void createStudyGroup(Long userId, StudyGroupReqDto studyGroupReqDto) {
         //userId로 유저를 찾는다. Optional로 조회되므로 .get()매서드를 사용해준다.
         User user = userRepository.findById(userId).get();
 
         //studyGroupCreateReqDto를 엔티티로 변환 후 디비에 정보를 저장한다.
-        StudyGroup studyGroup = studyGroupCreateReqDto.toEntity();
+        StudyGroup studyGroup = studyGroupReqDto.toEntity();
         studyGroupRepository.save(studyGroup);
 
         //StudyMember 생성
         studyMemberService.createStudyMember(user, studyGroup, true);
 
         //StudySchedule 생성
-        studyScheduleService.createStudySchedule(studyGroup, studyGroupCreateReqDto.getSchedules());
+        studyScheduleService.createStudySchedule(studyGroup, studyGroupReqDto.getSchedules());
 
         //InvitedMember 생성
-        invitedMemberService.createInvitedMember(studyGroup, studyGroupCreateReqDto.getInvitees());
+        invitedMemberService.createInvitedMember(studyGroup, studyGroupReqDto.getInvitees());
     }
 
     /***********************************
@@ -101,4 +100,3 @@ public class StudyGroupService {
         studyPenaltyService.deleteStudyMember(studyMember);
     }
 }
-
