@@ -12,7 +12,6 @@ import com.StudyOps.domain.member.service.InvitedMemberService;
 import com.StudyOps.domain.member.service.StudyMemberService;
 import com.StudyOps.domain.penalty.service.StudyPenaltyService;
 import com.StudyOps.domain.schedule.dto.StudyScheduleDto;
-import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.schedule.service.StudyScheduleService;
 import com.StudyOps.domain.user.entity.User;
@@ -23,8 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -115,37 +114,37 @@ public class StudyGroupService {
      **/
     public List<StudyGroupResDto> getAllStudyGroups(Long userId) {
 
-        List<StudyGroupResDto> resDtos = new ArrayList<>();
-
         User user = userRepository.findById(userId).get();
 
         List<StudyMember> studyMembers = studyMemberRepository.findAllByUser(user);
-       for(int i=0; i<studyMembers.size(); i++){
-           StudyGroup studyGroup = studyMembers.get(i).getStudyGroup();
-           List<StudySchedule> studySchedules = studyScheduleRepository.findAllByStudyGroup(studyGroup);
-           List<StudyScheduleDto> studyScheduleDtos = new ArrayList<>();
-           for(int j=0; j<studySchedules.size(); j++){
-               StudyScheduleDto studyScheduleDto = StudyScheduleDto.builder()
-                       .dayWeek(studySchedules.get(j).getDayWeek())
-                       .startTime(studySchedules.get(j).getStartTime())
-                       .finishTime(studySchedules.get(j).getFinishTime())
-                       .build();
-               studyScheduleDtos.add(studyScheduleDto);
-           }
-           StudyGroupResDto studyGroupResDto = StudyGroupResDto.builder()
-                   .groupId(studyGroup.getId())
-                   .name(studyGroup.getName())
-                   .intro(studyGroup.getIntro())
-                   .schedules(studyScheduleDtos)
-                   .hostName(studyGroup.getHostName())
-                   .hostStatus((studyGroup.getHostName()==user.getNickname()))
-                   .headCount(studyGroup.getHeadCount())
-                   .absenceCost(studyGroup.getAbsenceCost())
-                   .lateCost(studyGroup.getLateCost())
-                   .startDate(studyGroup.getStartDate())
-                   .build();
-           resDtos.add(studyGroupResDto);
-       }
+        List<StudyGroupResDto> resDtos = studyMembers.stream()
+                .map(member -> {
+                    StudyGroup studyGroup = member.getStudyGroup();
+                    List<StudyScheduleDto> studyScheduleDtos = studyScheduleRepository.findAllByStudyGroup(studyGroup)
+                            .stream()
+                            .map(schedule -> StudyScheduleDto.builder()
+                                    .dayWeek(schedule.getDayWeek())
+                                    .startTime(schedule.getStartTime())
+                                    .finishTime(schedule.getFinishTime())
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    return StudyGroupResDto.builder()
+                            .groupId(studyGroup.getId())
+                            .name(studyGroup.getName())
+                            .intro(studyGroup.getIntro())
+                            .schedules(studyScheduleDtos)
+                            .hostName(studyGroup.getHostName())
+                            .hostStatus(studyGroup.getHostName().equals(user.getNickname()))
+                            .headCount(studyGroup.getHeadCount())
+                            .absenceCost(studyGroup.getAbsenceCost())
+                            .lateCost(studyGroup.getLateCost())
+                            .startDate(studyGroup.getStartDate())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
         return resDtos;
+
     }
 }
