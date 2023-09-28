@@ -30,22 +30,22 @@ public class ApiResponse<T> {
         this.message = status.getMessage();
         this.data = data;
     }
-    @JsonProperty("isSuccess") // 생성자에 변수 순서 지정
+    @JsonProperty("isSuccess")
     public boolean isSuccess() {
         return isSuccess;
     }
 
-    @JsonProperty("status") // 생성자에 변수 순서 지정
+    @JsonProperty("status")
     public int getStatus() {
         return status;
     }
 
-    @JsonProperty("message") // 생성자에 변수 순서 지정
+    @JsonProperty("message")
     public String getMessage() {
         return message;
     }
 
-    @JsonProperty("data") // 생성자에 변수 순서 지정
+    @JsonProperty("data")
     public T getData() {
         return data;
     }

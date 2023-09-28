@@ -46,7 +46,7 @@ public class StudyGroupController {
     @GetMapping("/groups/{userId}")
     public ResponseEntity<ApiResponse<List<StudyGroupResDto>>> getAllOfStudyGroups(@PathVariable(value = "userId") Long userId){
 
-        ApiResponse<List<StudyGroupResDto>> successResponse = new ApiResponse<>(ALL_STUDY_GROUPS_GET_SUCCESS,studyGroupService.getAllOfStudyGroups(userId));
+        ApiResponse<List<StudyGroupResDto>> successResponse = new ApiResponse<>(ALL_STUDY_GROUPS_GET_SUCCESS,studyGroupService.getAllStudyGroups(userId));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

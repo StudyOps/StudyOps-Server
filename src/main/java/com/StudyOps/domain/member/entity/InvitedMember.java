@@ -26,4 +26,11 @@ public class InvitedMember {
     private StudyGroup studyGroup;
     @Enumerated(EnumType.STRING)
     private AcceptStatus acceptStatus;
+
+    public void accept(){
+        this.acceptStatus = AcceptStatus.ACCEPT;
+    }
+    public void reject(){
+        this.acceptStatus = AcceptStatus.REJECT;
+    }
 }
