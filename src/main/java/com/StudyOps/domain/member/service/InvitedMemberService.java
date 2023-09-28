@@ -25,7 +25,7 @@ public class InvitedMemberService {
     private final InvitedMemberRepository invitedMemberRepository;
     private final UserRepository userRepository;
     private final StudyGroupRepository studyGroupRepository;
-    private final StudyMemberRepository studyMemberRepository;
+    private final StudyMemberService studyMemberService;
 
     /**
      예외처리  1. 중복초대 방지
@@ -53,15 +53,7 @@ public class InvitedMemberService {
         InvitedMember invitedMember = invitedMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
         invitedMember.accept();
 
-        StudyMember studyMember = StudyMember.builder()
-                .user(user)
-                .studyGroup(studyGroup)
-                .hostStatus(false)
-                .totalPenalty(0)
-                .joinDate(LocalDate.now())
-                .build();
-
-        studyMemberRepository.save(studyMember);
+        studyMemberService.createStudyMember(user,studyGroup,false);
     }
 }
 
