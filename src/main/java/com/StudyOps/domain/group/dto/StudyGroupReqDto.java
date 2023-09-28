@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StudyGroupCreateReqDto {
+public class StudyGroupReqDto {
 
     private String name;
     private String intro;

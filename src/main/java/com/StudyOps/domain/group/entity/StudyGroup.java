@@ -21,7 +21,6 @@ public class StudyGroup {
     private String name;
     private String intro;
     private String rule;
-    private LocalDate startDate;
     private int absenceCost;
     private int lateCost;
     private int totalCost;
@@ -29,7 +28,7 @@ public class StudyGroup {
     private String account;
     private int headCount;
     private String hostName;
-
+    private LocalDate startDate;
     public void decreaseHeadCount(){
         headCount--;
     }
