@@ -55,5 +55,13 @@ public class InvitedMemberService {
 
         studyMemberService.createStudyMember(user,studyGroup,false);
     }
+
+    public void rejectInvitedStudyGroup(Long groupId, Long userId) {
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        User user = userRepository.findById(userId).get();
+        InvitedMember invitedMember = invitedMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
+        invitedMember.reject();
+    }
 }
 

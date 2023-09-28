@@ -7,12 +7,10 @@ import com.StudyOps.global.common.ApiResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.StudyOps.global.common.ApiResponseStatus.*;
+import static org.springframework.http.HttpStatus.*;
 
 
 @RestController
@@ -20,6 +18,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.*;
 public class InvitedMemberController {
     private final InvitedMemberService invitedMemberService;
 
+    // 스터디 초대
     @PostMapping("/asks/{groupId}")
     public ResponseEntity<ApiResponse<Object>>  createInvitedMember(@PathVariable(value = "groupId") Long groupId, @RequestBody InvitedMemberReqDto invitedMemberReqDto){
 
@@ -27,14 +26,25 @@ public class InvitedMemberController {
 
         ApiResponse<Object> successResponse = new ApiResponse<>(INVITED_MEMBER_CREATE_SUCCESS);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+        return ResponseEntity.status(CREATED).body(successResponse);
     }
+    //스터디 초대 수락
     @PostMapping("/asks/responses/{groupId}/{userId}")
     public ResponseEntity<ApiResponse<Object>> acceptInvitedStudyGroup(@PathVariable(value = "groupId") Long groupId,@PathVariable(value = "userId") Long userId){
 
         invitedMemberService.acceptInvitedStudyGroup(groupId,userId);
         ApiResponse<Object> successResponse = new ApiResponse<>(INVITED_MEMBER_ACCEPT_SUCCESS);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+        return ResponseEntity.status(CREATED).body(successResponse);
+    }
+
+    //스터디 초대 거절
+    @PatchMapping("/asks/responses/{groupId}/{userId}")
+    public ResponseEntity<ApiResponse<Object>> rejectInvitedStudyGroup(@PathVariable(value = "groupId") Long groupId,@PathVariable(value = "userId") Long userId){
+
+        invitedMemberService.rejectInvitedStudyGroup(groupId,userId);
+        ApiResponse<Object> successResponse = new ApiResponse<>(INVITED_MEMBER_REJECT_SUCCESS);
+
+        return ResponseEntity.status(OK).body(successResponse);
     }
 }

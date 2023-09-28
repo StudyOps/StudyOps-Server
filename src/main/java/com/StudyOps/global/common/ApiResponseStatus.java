@@ -12,7 +12,7 @@ public enum ApiResponseStatus {
     ALL_STUDY_GROUPS_GET_SUCCESS(true, 200, "참여중인 전체 스터디 목록을 조회합니다."),
     INVITED_MEMBER_CREATE_SUCCESS(true,201,"스터디 초대에 성공하였습니다"),
     INVITED_MEMBER_ACCEPT_SUCCESS(true, 201, "스터디 초대를 수락하였습니다."),
-    INVITED_MEMBER_REJECT_SUCCESS(true, 201, "스터디 초대를 거절하였습니다.");
+    INVITED_MEMBER_REJECT_SUCCESS(true, 200, "스터디 초대를 거절하였습니다.");
     private final boolean isSuccess;
     private final int status;
     private final String message;
