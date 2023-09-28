@@ -3,6 +3,7 @@ package com.StudyOps.domain.group.service;
 import com.StudyOps.domain.attendance.service.StudyAttendanceService;
 import com.StudyOps.domain.attendance.service.StudyAttendanceVoteService;
 import com.StudyOps.domain.group.dto.StudyGroupReqDto;
+import com.StudyOps.domain.group.dto.StudyGroupResDto;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
@@ -10,6 +11,9 @@ import com.StudyOps.domain.member.repository.StudyMemberRepository;
 import com.StudyOps.domain.member.service.InvitedMemberService;
 import com.StudyOps.domain.member.service.StudyMemberService;
 import com.StudyOps.domain.penalty.service.StudyPenaltyService;
+import com.StudyOps.domain.schedule.dto.StudyScheduleDto;
+import com.StudyOps.domain.schedule.entity.StudySchedule;
+import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.schedule.service.StudyScheduleService;
 import com.StudyOps.domain.user.entity.User;
 import com.StudyOps.domain.user.repository.UserRepository;
@@ -19,12 +23,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class StudyGroupService {
+    private final StudyScheduleRepository studyScheduleRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
@@ -98,5 +105,47 @@ public class StudyGroupService {
 
         //벌금 테이블에서 찾은 studyMember 삭제
         studyPenaltyService.deleteStudyMember(studyMember);
+
+        //스터디 멤버 테이블에서 최종적으로 그 스터디멤버 삭제
+        studyMemberRepository.delete(studyMember);
+    }
+
+    /**
+     예외 처리 1. 유효하지않은 userId
+     **/
+    public List<StudyGroupResDto> getAllOfStudyGroups(Long userId) {
+
+        List<StudyGroupResDto> resDtos = new ArrayList<>();
+
+        User user = userRepository.findById(userId).get();
+
+        List<StudyMember> studyMembers = studyMemberRepository.findAllByUser(user);
+       for(int i=0; i<studyMembers.size(); i++){
+           StudyGroup studyGroup = studyMembers.get(i).getStudyGroup();
+           List<StudySchedule> studySchedules = studyScheduleRepository.findAllByStudyGroup(studyGroup);
+           List<StudyScheduleDto> studyScheduleDtos = new ArrayList<>();
+           for(int j=0; j<studySchedules.size(); j++){
+               StudyScheduleDto studyScheduleDto = StudyScheduleDto.builder()
+                       .dayWeek(studySchedules.get(j).getDayWeek())
+                       .startTime(studySchedules.get(j).getStartTime())
+                       .finishTime(studySchedules.get(j).getFinishTime())
+                       .build();
+               studyScheduleDtos.add(studyScheduleDto);
+           }
+           StudyGroupResDto studyGroupResDto = StudyGroupResDto.builder()
+                   .groupId(studyGroup.getId())
+                   .name(studyGroup.getName())
+                   .intro(studyGroup.getIntro())
+                   .schedules(studyScheduleDtos)
+                   .hostName(studyGroup.getHostName())
+                   .hostStatus((studyGroup.getHostName()==user.getNickname()))
+                   .headCount(studyGroup.getHeadCount())
+                   .absenceCost(studyGroup.getAbsenceCost())
+                   .lateCost(studyGroup.getLateCost())
+                   .startDate(studyGroup.getStartDate())
+                   .build();
+           resDtos.add(studyGroupResDto);
+       }
+        return resDtos;
     }
 }
