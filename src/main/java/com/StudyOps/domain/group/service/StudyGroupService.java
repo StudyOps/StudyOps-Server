@@ -113,7 +113,7 @@ public class StudyGroupService {
     /**
      예외 처리 1. 유효하지않은 userId
      **/
-    public List<StudyGroupResDto> getAllOfStudyGroups(Long userId) {
+    public List<StudyGroupResDto> getAllStudyGroups(Long userId) {
 
         List<StudyGroupResDto> resDtos = new ArrayList<>();
 
