@@ -76,7 +76,7 @@ public class StudyGroupService {
         studyScheduleService.createStudySchedule(studyGroup, studyGroupReqDto.getSchedules());
 
         //InvitedMember 생성
-        invitedMemberService.createInvitedMember(studyGroup, studyGroupReqDto.getInvitees());
+        invitedMemberService.createInvitedMember(studyGroup.getId(), studyGroupReqDto.getInvitees());
     }
 
     /***********************************
