@@ -32,4 +32,8 @@ public class StudyGroup {
     public void decreaseHeadCount(){
         headCount--;
     }
+
+    public void increaseHeadCount() {
+        headCount++;
+    }
 }

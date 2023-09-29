@@ -55,7 +55,7 @@ public class InvitedMemberController {
     @GetMapping("/asks/{userId}")
     public ResponseEntity<ApiResponse<List<StudyGroupResDto>>> getAllInvitedStudyGroups(@PathVariable(value = "userId") Long userId){
 
-        ApiResponse<List<StudyGroupResDto>> successResponse = new ApiResponse<>(ALL_STUDY_GROUPS_GET_SUCCESS,invitedMemberService.getAllInvitedStudyGroups(userId));
+        ApiResponse<List<StudyGroupResDto>> successResponse = new ApiResponse<>(ALL_INVITED_STUDY_GROUPS_GET_SUCCESS,invitedMemberService.getAllInvitedStudyGroups(userId));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

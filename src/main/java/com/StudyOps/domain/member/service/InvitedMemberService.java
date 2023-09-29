@@ -54,6 +54,7 @@ public class InvitedMemberService {
         User user = userRepository.findById(userId).get();
         InvitedMember invitedMember = invitedMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
         invitedMember.accept();
+        studyGroup.increaseHeadCount();
 
         studyMemberService.createStudyMember(user,studyGroup,false);
     }
