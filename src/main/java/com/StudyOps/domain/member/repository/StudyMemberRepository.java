@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> {
     Optional<StudyMember> findByStudyGroupAndUser(StudyGroup studyGroup, User user);
     List<StudyMember> findAllByUser(User user);
+    List<StudyMember> findAllByStudyGroup(StudyGroup studyGroup);
 }

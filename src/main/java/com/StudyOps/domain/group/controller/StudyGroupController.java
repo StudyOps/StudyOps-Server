@@ -1,5 +1,6 @@
 package com.StudyOps.domain.group.controller;
 
+import com.StudyOps.domain.group.dto.StudyGroupInfoResDto;
 import com.StudyOps.domain.group.dto.StudyGroupReqDto;
 import com.StudyOps.domain.group.dto.StudyGroupResDto;
 import com.StudyOps.domain.group.service.StudyGroupService;
@@ -20,9 +21,10 @@ import static com.StudyOps.global.common.ApiResponseStatus.*;
 public class StudyGroupController {
 
     private final StudyGroupService studyGroupService;
+
     //스터디 생성
     @PostMapping("/groups/{userId}")
-    public ResponseEntity<ApiResponse<Object>> createStudyGroup(@PathVariable(value = "userId") Long userId,@RequestBody StudyGroupReqDto studyGroupReqDto) {
+    public ResponseEntity<ApiResponse<Object>> createStudyGroup(@PathVariable(value = "userId") Long userId, @RequestBody StudyGroupReqDto studyGroupReqDto) {
 
         //로직 처리
         studyGroupService.createStudyGroup(userId, studyGroupReqDto);
@@ -31,11 +33,12 @@ public class StudyGroupController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
     }
+
     //스터디 탈퇴
     @DeleteMapping("/groups/{groupId}/{userId}")
-    public ResponseEntity<ApiResponse<Object>> quitStudyGroup(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId){
+    public ResponseEntity<ApiResponse<Object>> quitStudyGroup(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId) {
 
-        studyGroupService.quitStudyGroup(groupId,userId);
+        studyGroupService.quitStudyGroup(groupId, userId);
 
         ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_GROUP_QUIT_SUCCESS);
 
@@ -44,9 +47,17 @@ public class StudyGroupController {
 
     //스터디 전체 조회
     @GetMapping("/groups/{userId}")
-    public ResponseEntity<ApiResponse<List<StudyGroupResDto>>> getAllOfStudyGroups(@PathVariable(value = "userId") Long userId){
+    public ResponseEntity<ApiResponse<List<StudyGroupResDto>>> getAllOfStudyGroups(@PathVariable(value = "userId") Long userId) {
 
-        ApiResponse<List<StudyGroupResDto>> successResponse = new ApiResponse<>(ALL_STUDY_GROUPS_GET_SUCCESS,studyGroupService.getAllStudyGroups(userId));
+        ApiResponse<List<StudyGroupResDto>> successResponse = new ApiResponse<>(ALL_STUDY_GROUPS_GET_SUCCESS, studyGroupService.getAllStudyGroups(userId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+
+    //스터디 정보 조회
+    @GetMapping("/info/{groupId}")
+    public ResponseEntity<ApiResponse<StudyGroupInfoResDto>> getStudyGroupInfo(@PathVariable(value = "groupId") Long groupId) {
+        ApiResponse<StudyGroupInfoResDto> successResponse = new ApiResponse<>(STUDY_GROUP_INFO_GET_SUCCESS, studyGroupService.getStudyGroupInfo(groupId));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

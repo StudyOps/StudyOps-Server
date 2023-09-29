@@ -2,6 +2,7 @@ package com.StudyOps.domain.group.service;
 
 import com.StudyOps.domain.attendance.service.StudyAttendanceService;
 import com.StudyOps.domain.attendance.service.StudyAttendanceVoteService;
+import com.StudyOps.domain.group.dto.StudyGroupInfoResDto;
 import com.StudyOps.domain.group.dto.StudyGroupReqDto;
 import com.StudyOps.domain.group.dto.StudyGroupResDto;
 import com.StudyOps.domain.group.entity.StudyGroup;
@@ -12,6 +13,7 @@ import com.StudyOps.domain.member.service.InvitedMemberService;
 import com.StudyOps.domain.member.service.StudyMemberService;
 import com.StudyOps.domain.penalty.service.StudyPenaltyService;
 import com.StudyOps.domain.schedule.dto.StudyScheduleDto;
+import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.schedule.service.StudyScheduleService;
 import com.StudyOps.domain.user.entity.User;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -146,5 +149,39 @@ public class StudyGroupService {
 
         return resDtos;
 
+    }
+
+    public StudyGroupInfoResDto getStudyGroupInfo(Long groupId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        List<StudyMember> memberList = studyMemberRepository.findAllByStudyGroup(studyGroup);
+        List<String> members = new ArrayList<>();
+
+        List<StudySchedule> scheduleList = studyScheduleRepository.findAllByStudyGroup(studyGroup);
+        List<StudyScheduleDto> schedules = new ArrayList<>();
+        for(int i=0; i<scheduleList.size(); i++){
+            StudyScheduleDto scheduleDto = StudyScheduleDto.builder()
+                    .dayWeek(scheduleList.get(i).getDayWeek())
+                    .startTime(scheduleList.get(i).getStartTime())
+                    .finishTime(scheduleList.get(i).getFinishTime())
+                    .build();
+            schedules.add(scheduleDto);
+        }
+        for(int i=0; i<memberList.size(); i++){
+            members.add(memberList.get(i).getUser().getNickname());
+        }
+        StudyGroupInfoResDto studyGroupInfoResDto = StudyGroupInfoResDto.builder()
+                .name(studyGroup.getName())
+                .intro(studyGroup.getIntro())
+                .rule(studyGroup.getRule())
+                .hostName(studyGroup.getHostName())
+                .members(members)
+                .startDate(studyGroup.getStartDate())
+                .schedules(schedules)
+                .allowedTime(studyGroup.getAllowedTime())
+                .lateCost(studyGroup.getLateCost())
+                .absenceCost(studyGroup.getAbsenceCost())
+                .build();
+
+        return studyGroupInfoResDto;
     }
 }
