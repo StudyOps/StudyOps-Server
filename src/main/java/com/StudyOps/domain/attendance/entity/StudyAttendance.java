@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,5 +24,5 @@ public class StudyAttendance {
     private StudyMember studyMember;
     private Boolean isLate;
     private int lateTime;
-    private LocalDate date;
+    private LocalDateTime time;
 }

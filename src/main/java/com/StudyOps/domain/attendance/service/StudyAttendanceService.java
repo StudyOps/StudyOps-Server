@@ -62,7 +62,7 @@ public class StudyAttendanceService {
         //이 부분에 벌금 테이블에 추가도 나중에 구현에야함
         StudyAttendance studyAttendance = StudyAttendance.builder()
                 .studyMember(studyMember)
-                .date(LocalDate.now())
+                .time(LocalDateTime.now())
                 .lateTime(timeDifference)
                 .isLate(timeDifference>0)
                 .build();

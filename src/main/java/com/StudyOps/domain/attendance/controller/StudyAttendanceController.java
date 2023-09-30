@@ -25,5 +25,4 @@ public class StudyAttendanceController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
     }
-
 }
