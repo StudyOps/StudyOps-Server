@@ -25,4 +25,5 @@ public class StudyAttendance {
     private Boolean isLate;
     private int lateTime;
     private LocalDateTime time;
+    private LocalDate date;
 }

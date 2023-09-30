@@ -1,5 +1,6 @@
 package com.StudyOps.domain.attendance.service;
 
+import com.StudyOps.domain.attendance.dto.StudyScheduleAndAttendanceResDto;
 import com.StudyOps.domain.attendance.entity.StudyAttendance;
 import com.StudyOps.domain.attendance.repository.StudyAttendanceRepository;
 import com.StudyOps.domain.group.entity.StudyGroup;
@@ -15,11 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Null;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,8 +50,8 @@ public class StudyAttendanceService {
         //지각 계산 로직
         LocalDateTime currentTime = LocalDateTime.now();
         //현재 날짜의 요일을 구하고 ScheduleRepository에서 해당 스터디와 정보로 Schedule을 찾음
-        String curreDayWeek = currentTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
-        StudySchedule studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeek(studyGroup,curreDayWeek).get();
+        String currentDayWeek = currentTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
+        StudySchedule studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeek(studyGroup,currentDayWeek).get();
 
         //출석시간과 스터디시작 시간 차이를 구함
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -63,9 +66,41 @@ public class StudyAttendanceService {
         StudyAttendance studyAttendance = StudyAttendance.builder()
                 .studyMember(studyMember)
                 .time(LocalDateTime.now())
+                .date(LocalDate.now())
                 .lateTime(timeDifference)
                 .isLate(timeDifference>0)
                 .build();
         studyAttendanceRepository.save(studyAttendance);
+    }
+
+    public StudyScheduleAndAttendanceResDto getStudyScheduleAndAttendance(Long groupId, Long userId) {
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        User user = userRepository.findById(userId).get();
+        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        String currentDayWeek = currentTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
+        Optional<StudySchedule> studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeek(studyGroup,currentDayWeek);
+        if(studySchedule.isEmpty())
+            return StudyScheduleAndAttendanceResDto.builder()
+                    .isStudyDay(false)
+                    .build();
+        Optional<StudyAttendance> studyAttendance = studyAttendanceRepository.findByStudyMemberAndDate(studyMember,LocalDate.now());
+       if(studyAttendance.isEmpty())
+           return StudyScheduleAndAttendanceResDto.builder()
+                   .isStudyDay(true)
+                   .startTime(studySchedule.get().getStartTime())
+                   .finishTime(studySchedule.get().getFinishTime())
+                   .isAttendant(false)
+                   .build();
+       return StudyScheduleAndAttendanceResDto.builder()
+               .isStudyDay(true)
+               .isAttendant(true)
+               .isLate(studyAttendance.get().getIsLate())
+               .startTime(studySchedule.get().getStartTime())
+               .lateTime(studyAttendance.get().getLateTime())
+               .attendanceTime(studyAttendance.get().getTime())
+               .build();
     }
 }
