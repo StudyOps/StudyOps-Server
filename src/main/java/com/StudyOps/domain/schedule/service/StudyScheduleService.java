@@ -19,7 +19,7 @@ public class StudyScheduleService {
     private final StudyScheduleRepository studyScheduleRepository;
 
     public void createStudySchedule(StudyGroup studyGroup, List<StudyScheduleDto> studySchedules){
-        //스트림과 맵을 활용하여 StudyScheduleDto 리스트에 있는 각 스케쥴을 디비에 저장한다.
+        //스트림과 맵을 활용하여 StudyScheduleDto 리스트에 있는 각 Schedule을 디비에 저장한다.
         studySchedules.stream()
                 .map(schedule -> StudySchedule.builder()
                         .studyGroup(studyGroup)
@@ -29,4 +29,5 @@ public class StudyScheduleService {
                         .build())
                 .forEach(studyScheduleRepository::save);
     }
+
 }
