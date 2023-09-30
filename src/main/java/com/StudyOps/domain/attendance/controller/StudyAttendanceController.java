@@ -16,7 +16,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.STUDY_DATE_ATTEND_SUC
 public class StudyAttendanceController {
     private final StudyAttendanceService studyAttendanceService;
 
-    @PostMapping("/schedules/attendance/{groupId}/{userId}")
+    @PostMapping("/schedules/attendances/{groupId}/{userId}")
     public ResponseEntity<ApiResponse<Object>> createStudyGroup(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId) {
 
         studyAttendanceService.attendStudyDate(groupId, userId);
