@@ -3,6 +3,7 @@ package com.StudyOps.domain.schedule.service;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.schedule.dto.StudyScheduleDto;
+import com.StudyOps.domain.schedule.dto.StudyScheduleListDto;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class StudyScheduleService {
                 .forEach(studyScheduleRepository::save);
     }
 
-    public List<StudyScheduleDto> getStudySchedule(Long groupId) {
+    public StudyScheduleListDto getStudySchedule(Long groupId) {
 
         List<StudyScheduleDto> studyScheduleDtos = new ArrayList<>();
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
@@ -47,6 +48,9 @@ public class StudyScheduleService {
                     .build();
             studyScheduleDtos.add(studyScheduleDto);
         }
-        return studyScheduleDtos;
+        return StudyScheduleListDto.builder()
+                .startDate(studyGroup.getStartDate())
+                .schedules(studyScheduleDtos)
+                .build();
     }
 }

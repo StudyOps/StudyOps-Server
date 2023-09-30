@@ -6,13 +6,9 @@ import com.StudyOps.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static com.StudyOps.global.common.ApiResponseStatus.STUDY_DATE_ATTEND_SUCCESS;
-import static com.StudyOps.global.common.ApiResponseStatus.STUDY_SCHEDULE_ATTENDANCE_GET_SUCCESS;
+import static com.StudyOps.global.common.ApiResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,4 +31,11 @@ public class StudyAttendanceController {
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
+//    @GetMapping("/schedules/attendances/{groupId}")
+//    public ResponseEntity<ApiResponse<Object>> getStudyAttendanceByDate(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId, @RequestParam String date) {
+//
+//
+//        ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_ATTENDANCE_GET_BY_DATE_SUCCESS,studyAttendanceService.getStudyAttendanceByDate(groupId,date));
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
 }

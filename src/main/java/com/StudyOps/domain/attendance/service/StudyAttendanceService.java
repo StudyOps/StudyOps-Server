@@ -103,4 +103,9 @@ public class StudyAttendanceService {
                .attendanceTime(studyAttendance.get().getTime())
                .build();
     }
+
+    public void getStudyAttendanceByDate(Long groupId, String date) {
+
+
+    }
 }
