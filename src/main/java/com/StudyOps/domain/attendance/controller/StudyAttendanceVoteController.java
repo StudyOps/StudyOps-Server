@@ -16,12 +16,12 @@ public class StudyAttendanceVoteController {
     private final StudyAttendanceVoteService studyAttendanceVoteService;
 
     @PatchMapping("/schedules/attendances/{groupId}/{userId}")
-    public ResponseEntity<ApiResponse<Object>> absentStudyDate(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId, @RequestParam String date) {
+    public ResponseEntity<ApiResponse<Object>> absentOrAttendStudyDate(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId, @RequestParam String date, @RequestParam Boolean attendance) {
 
-        studyAttendanceVoteService.absentStudyDate(groupId, userId, date);
+        studyAttendanceVoteService.absentOrAttendStudyDate(groupId, userId, date, attendance);
 
         ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_DATE_ABSENT_SUCCESS);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 }

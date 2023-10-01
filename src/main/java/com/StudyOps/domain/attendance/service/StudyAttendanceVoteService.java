@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,17 +32,27 @@ public class StudyAttendanceVoteService {
         attendanceVotes.stream()
                 .forEach(attendanceVote -> studyAttendanceVoteRepository.delete(attendanceVote));
     }
-    public void absentStudyDate(Long groupId, Long userId, String date) {
+    public void absentOrAttendStudyDate(Long groupId, Long userId, String date,Boolean attendance) {
         StudyGroup studyGroup =  studyGroupRepository.findById(groupId).get();
         User user = userRepository.findById(userId).get();
         StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
-
         LocalDate absentDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
-        StudyAttendanceVote studyAttendanceVote = StudyAttendanceVote.builder()
-                .attendance(false)
-                .studyMember(studyMember)
-                .date(absentDate)
-                .build();
-        studyAttendanceVoteRepository.save(studyAttendanceVote);
+
+        Optional<StudyAttendanceVote> studyAttendanceVote =studyAttendanceVoteRepository.findByStudyMemberAndDate(studyMember,absentDate);
+
+        if(studyAttendanceVote.isEmpty()){
+            StudyAttendanceVote vote = StudyAttendanceVote.builder()
+                    .attendance(attendance)
+                    .studyMember(studyMember)
+                    .date(absentDate)
+                    .build();
+            studyAttendanceVoteRepository.save(vote);
+        }
+        else{
+            if(attendance)
+                studyAttendanceVote.get().attend();
+            else
+                studyAttendanceVote.get().absent();
+        }
     }
 }

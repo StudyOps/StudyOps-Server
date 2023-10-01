@@ -1,5 +1,6 @@
 package com.StudyOps.domain.attendance.controller;
 
+import com.StudyOps.domain.attendance.dto.StudyAttendanceAndAbsenceDto;
 import com.StudyOps.domain.attendance.dto.StudyScheduleAndAttendanceResDto;
 import com.StudyOps.domain.attendance.service.StudyAttendanceService;
 import com.StudyOps.global.common.ApiResponse;
@@ -24,18 +25,21 @@ public class StudyAttendanceController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
     }
+
     @GetMapping("/schedules/{groupId}/{userId}")
     public ResponseEntity<ApiResponse<StudyScheduleAndAttendanceResDto>> getStudyGroupScheduleAndAttendance(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId) {
 
-        ApiResponse<StudyScheduleAndAttendanceResDto> successResponse = new ApiResponse<>(STUDY_SCHEDULE_ATTENDANCE_GET_SUCCESS,studyAttendanceService.getStudyScheduleAndAttendance(groupId, userId));
+        ApiResponse<StudyScheduleAndAttendanceResDto> successResponse = new ApiResponse<>(STUDY_SCHEDULE_ATTENDANCE_GET_SUCCESS, studyAttendanceService.getStudyScheduleAndAttendance(groupId, userId));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
-//    @GetMapping("/schedules/attendances/{groupId}")
-//    public ResponseEntity<ApiResponse<Object>> getStudyAttendanceByDate(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId, @RequestParam String date) {
-//
-//
-//        ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_ATTENDANCE_GET_BY_DATE_SUCCESS,studyAttendanceService.getStudyAttendanceByDate(groupId,date));
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+
+    @GetMapping("/schedules/attendances/{groupId}/{userId}")
+    public ResponseEntity<ApiResponse<StudyAttendanceAndAbsenceDto>> getStudyAttendanceByDate(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId, @RequestParam String date) {
+
+
+        ApiResponse<StudyAttendanceAndAbsenceDto> successResponse = new ApiResponse<>(STUDY_ATTENDANCE_GET_BY_DATE_SUCCESS, studyAttendanceService.getStudyAttendanceByDate(groupId, userId, date));
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
 }
