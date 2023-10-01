@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudyAttendanceVote {
@@ -22,4 +23,11 @@ public class StudyAttendanceVote {
     private StudyMember studyMember;
     private Boolean attendance;
     private LocalDate date;
+
+    public void absent(){
+        attendance = false;
+    }
+    public void attend(){
+        attendance = true;
+    }
 }
