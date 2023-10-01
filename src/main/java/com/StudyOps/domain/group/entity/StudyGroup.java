@@ -36,4 +36,11 @@ public class StudyGroup {
     public void increaseHeadCount() {
         headCount++;
     }
+
+    public void changeRule(String rule) {
+        this.rule = rule;
+    }
+    public void changeIntro(String intro) {
+        this.intro = intro;
+    }
 }

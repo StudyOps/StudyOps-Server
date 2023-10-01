@@ -2,9 +2,7 @@ package com.StudyOps.domain.group.service;
 
 import com.StudyOps.domain.attendance.service.StudyAttendanceService;
 import com.StudyOps.domain.attendance.service.StudyAttendanceVoteService;
-import com.StudyOps.domain.group.dto.StudyGroupInfoResDto;
-import com.StudyOps.domain.group.dto.StudyGroupReqDto;
-import com.StudyOps.domain.group.dto.StudyGroupResDto;
+import com.StudyOps.domain.group.dto.*;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
@@ -183,5 +181,16 @@ public class StudyGroupService {
                 .build();
 
         return studyGroupInfoResDto;
+    }
+
+    public void changeStudyGroupRule(Long groupId, StudyGroupRuleReqDto studyGroupRuleReqDto) {
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        studyGroup.changeRule(studyGroupRuleReqDto.getRule());
+    }
+    public void changeStudyGroupIntro(Long groupId, StudyGroupIntroReqDto studyGroupIntroReqDto) {
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        studyGroup.changeIntro(studyGroupIntroReqDto.getIntro());
     }
 }

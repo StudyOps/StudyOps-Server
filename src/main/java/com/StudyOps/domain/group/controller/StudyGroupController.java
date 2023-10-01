@@ -1,12 +1,8 @@
 package com.StudyOps.domain.group.controller;
 
-import com.StudyOps.domain.group.dto.StudyGroupInfoResDto;
-import com.StudyOps.domain.group.dto.StudyGroupReqDto;
-import com.StudyOps.domain.group.dto.StudyGroupResDto;
+import com.StudyOps.domain.group.dto.*;
 import com.StudyOps.domain.group.service.StudyGroupService;
 import com.StudyOps.global.common.ApiResponse;
-import com.StudyOps.global.common.ApiResponseStatus;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +53,24 @@ public class StudyGroupController {
     //스터디 정보 조회
     @GetMapping("/info/{groupId}")
     public ResponseEntity<ApiResponse<StudyGroupInfoResDto>> getStudyGroupInfo(@PathVariable(value = "groupId") Long groupId) {
+
         ApiResponse<StudyGroupInfoResDto> successResponse = new ApiResponse<>(STUDY_GROUP_INFO_GET_SUCCESS, studyGroupService.getStudyGroupInfo(groupId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+    @PatchMapping("/info/rules/{groupId}")
+    public ResponseEntity<ApiResponse<Object>> changeStudyGroupRule(@PathVariable (value = "groupId") Long groupId, @RequestBody StudyGroupRuleReqDto studyGroupRuleReqDto){
+
+        studyGroupService.changeStudyGroupRule(groupId,studyGroupRuleReqDto);
+        ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_GROUP_RULE_CHANGE_SUCCESS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+    @PatchMapping("/info/intro/{groupId}")
+    public ResponseEntity<ApiResponse<Object>> changeStudyGroupInto(@PathVariable (value = "groupId") Long groupId, @RequestBody StudyGroupIntroReqDto studyGroupIntroReqDto){
+
+        studyGroupService.changeStudyGroupIntro(groupId,studyGroupIntroReqDto);
+        ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_GROUP_INTRO_CHANGE_SUCCESS);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

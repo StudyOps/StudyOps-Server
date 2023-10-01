@@ -19,7 +19,9 @@ public enum ApiResponseStatus {
     STUDY_DATE_ABSENT_SUCCESS(true, 200, "해당 날짜 참석여부 변경에 성공하였습니다."),
     STUDY_SCHEDULE_ATTENDANCE_GET_SUCCESS(true, 200, "스터디 해당 날짜 여부 조회 및 출석 조회에 성공하였습니다."),
     STUDY_SCHEDULE_GET_SUCCESS(true,200,"스터디 일정 정보 조회에 성공하였습니다."),
-    STUDY_ATTENDANCE_GET_BY_DATE_SUCCESS(true,200,"해당 날짜 스터디 참석 인원 정보 조회에 성공하였습니다.");
+    STUDY_ATTENDANCE_GET_BY_DATE_SUCCESS(true,200,"해당 날짜 스터디 참석 인원 정보 조회에 성공하였습니다."),
+    STUDY_GROUP_RULE_CHANGE_SUCCESS(true,200,"스터디 그룹 규칙 수정에 성공하였습니다."),
+    STUDY_GROUP_INTRO_CHANGE_SUCCESS(true,200,"스터디 그룹 소개 수정에 성공하였습니다.");
     private final boolean isSuccess;
     private final int status;
     private final String message;
