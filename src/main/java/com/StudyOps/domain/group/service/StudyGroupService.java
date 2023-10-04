@@ -42,25 +42,6 @@ public class StudyGroupService {
     private final StudyAttendanceVoteService studyAttendanceVoteService;
     private final StudyPenaltyService studyPenaltyService;
 
-    //테스트 유저 먼저 생성
-    @PostConstruct
-    public void init() {
-        User user1 = new User();
-        User user2 = new User();
-        User user3 = new User();
-        User user4 = new User();
-
-        user1.setNickname("이찬희");
-        user2.setNickname("장희영");
-        user3.setNickname("소예원");
-        user4.setNickname("누구지");
-
-        userRepository.save(user1);
-        userRepository.save(user2);
-        userRepository.save(user3);
-        userRepository.save(user4);
-    }
-
     public void createStudyGroup(Long userId, StudyGroupReqDto studyGroupReqDto) {
         //userId로 유저를 찾는다. Optional로 조회되므로 .get()매서드를 사용해준다.
         User user = userRepository.findById(userId).get();
