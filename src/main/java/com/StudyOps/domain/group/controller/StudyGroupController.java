@@ -20,12 +20,10 @@ public class StudyGroupController {
 
     //스터디 생성
     @PostMapping("/groups/{userId}")
-    public ResponseEntity<ApiResponse<Object>> createStudyGroup(@PathVariable(value = "userId") Long userId, @RequestBody StudyGroupReqDto studyGroupReqDto) {
+    public ResponseEntity<ApiResponse<StudyGroupCreatedIdDto>> createStudyGroup(@PathVariable(value = "userId") Long userId, @RequestBody StudyGroupReqDto studyGroupReqDto) {
 
-        //로직 처리
-        studyGroupService.createStudyGroup(userId, studyGroupReqDto);
         //응답 처리
-        ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_GROUP_CREATE_SUCCESS);
+        ApiResponse<StudyGroupCreatedIdDto> successResponse = new ApiResponse<>(STUDY_GROUP_CREATE_SUCCESS, studyGroupService.createStudyGroup(userId, studyGroupReqDto));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
     }

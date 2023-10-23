@@ -42,7 +42,7 @@ public class StudyGroupService {
     private final StudyAttendanceVoteService studyAttendanceVoteService;
     private final StudyPenaltyService studyPenaltyService;
 
-    public void createStudyGroup(Long userId, StudyGroupReqDto studyGroupReqDto) {
+    public StudyGroupCreatedIdDto createStudyGroup(Long userId, StudyGroupReqDto studyGroupReqDto) {
         //userId로 유저를 찾는다. Optional로 조회되므로 .get()매서드를 사용해준다.
         User user = userRepository.findById(userId).get();
 
@@ -58,6 +58,10 @@ public class StudyGroupService {
 
         //InvitedMember 생성
         invitedMemberService.createInvitedMember(studyGroup.getId(), studyGroupReqDto.getInvitees());
+
+        return StudyGroupCreatedIdDto.builder()
+                .postId(studyGroup.getId())
+                .build();
     }
 
     /***********************************
