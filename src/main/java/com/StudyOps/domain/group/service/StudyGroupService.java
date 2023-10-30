@@ -60,7 +60,7 @@ public class StudyGroupService {
         invitedMemberService.createInvitedMember(studyGroup.getId(), studyGroupReqDto.getInvitees());
 
         return StudyGroupCreatedIdDto.builder()
-                .postId(studyGroup.getId())
+                .groupId(studyGroup.getId())
                 .build();
     }
 
@@ -177,5 +177,11 @@ public class StudyGroupService {
 
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
         studyGroup.changeIntro(studyGroupIntroReqDto.getIntro());
+    }
+
+    public void changeStudyGroupAccount(Long groupId, StudyGroupAccountReqDto studyGroupAccountReqDto) {
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        studyGroup.changeAccount(studyGroupAccountReqDto.getAccount());
     }
 }

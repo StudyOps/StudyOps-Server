@@ -72,4 +72,12 @@ public class StudyGroupController {
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
+    @PatchMapping("/info/accounts/{groupId}")
+    public ResponseEntity<ApiResponse<Object>> changeStudyGroupAccount(@PathVariable (value = "groupId") Long groupId, @RequestBody StudyGroupAccountReqDto studyGroupAccountReqDto){
+
+        studyGroupService.changeStudyGroupAccount(groupId, studyGroupAccountReqDto);
+        ApiResponse<Object> successResponse = new ApiResponse<>(STUDY_GROUP_ACCOUNT_CHANGE_SUCCESS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
 }

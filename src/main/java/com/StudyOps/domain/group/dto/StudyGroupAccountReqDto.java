@@ -3,10 +3,11 @@ package com.StudyOps.domain.group.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Builder
+
 @Getter
-@AllArgsConstructor
-public class StudyGroupCreatedIdDto {
-    private long groupId;
+@NoArgsConstructor
+public class StudyGroupAccountReqDto {
+    private String account;
 }

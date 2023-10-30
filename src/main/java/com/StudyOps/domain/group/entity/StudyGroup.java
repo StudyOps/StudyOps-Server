@@ -43,4 +43,7 @@ public class StudyGroup {
     public void changeIntro(String intro) {
         this.intro = intro;
     }
+    public void changeAccount(String account) {
+        this.account = account;
+    }
 }
