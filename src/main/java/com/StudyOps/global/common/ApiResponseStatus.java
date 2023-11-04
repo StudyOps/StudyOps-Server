@@ -22,7 +22,8 @@ public enum ApiResponseStatus {
     STUDY_ATTENDANCE_GET_BY_DATE_SUCCESS(true,200,"해당 날짜 스터디 참석 인원 정보 조회에 성공하였습니다."),
     STUDY_GROUP_RULE_CHANGE_SUCCESS(true,200,"스터디 그룹 규칙 수정에 성공하였습니다."),
     STUDY_GROUP_INTRO_CHANGE_SUCCESS(true,200,"스터디 그룹 소개 수정에 성공하였습니다."),
-    STUDY_GROUP_ACCOUNT_CHANGE_SUCCESS(true,200,"스터디 그룹 벌금 계좌 수정에 성공하였습니다.");
+    STUDY_GROUP_ACCOUNT_CHANGE_SUCCESS(true,200,"스터디 그룹 벌금 계좌 수정에 성공하였습니다."),
+    STUDY_PENALTY_INFO_GET_SUCCESS(true,200, "스터디 그룹 벌금 정보 조회에 성공하였습니다.");
     private final boolean isSuccess;
     private final int status;
     private final String message;

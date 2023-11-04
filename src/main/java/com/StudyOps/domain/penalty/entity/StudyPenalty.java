@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class StudyPenalty {
     @Id @GeneratedValue
     @Column(name = "study_penalty_id")
@@ -21,11 +22,11 @@ public class StudyPenalty {
     @JoinColumn(name = "study_member_id")
     private StudyMember studyMember;
     private int fine;
-    private Boolean isPaid;
+    private Boolean isSettled;
     private int lateTime;
     private LocalDate date;
     /******************************************
-     지각인지 불참인지 여부, 지각 => ture 불참 => false
+     지각인지 불참인지 여부, 지각 => true 불참 => false
      ******************************************/
     private Boolean lateAbsent;
 }

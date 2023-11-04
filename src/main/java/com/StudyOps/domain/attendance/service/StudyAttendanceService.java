@@ -10,6 +10,8 @@ import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
+import com.StudyOps.domain.penalty.entity.StudyPenalty;
+import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.user.entity.User;
@@ -34,6 +36,7 @@ public class StudyAttendanceService {
     private final StudyAttendanceRepository studyAttendanceRepository;
     private final StudyAttendanceVoteRepository studyAttendanceVoteRepository;
     private final StudyGroupRepository studyGroupRepository;
+    private final StudyPenaltyRepository studyPenaltyRepository;
     private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyScheduleRepository studyScheduleRepository;
@@ -65,7 +68,17 @@ public class StudyAttendanceService {
 
         if (timeDifference <= 0)
             timeDifference = 0;
-        //이 부분에 벌금 테이블에 추가도 나중에 구현에야함
+        else{
+            StudyPenalty studyPenalty = StudyPenalty.builder()
+                    .studyMember(studyMember)
+                    .fine(studyGroup.getLateCost())
+                    .isSettled(false)
+                    .lateTime(timeDifference)
+                    .date(LocalDate.now())
+                    .lateAbsent(true)
+                    .build();
+            studyPenaltyRepository.save(studyPenalty);
+        }
         StudyAttendance studyAttendance = StudyAttendance.builder()
                 .studyMember(studyMember)
                 .time(LocalDateTime.now())
@@ -120,6 +133,15 @@ public class StudyAttendanceService {
 
         if (today.isAfter(studyDate)) {
             for (int i = 0; i < members.size(); i++) {
+                Optional<StudyAttendance> studyAttendance = studyAttendanceRepository.findByStudyMemberAndDate(members.get(i), studyDate);
+                if (studyAttendance.isEmpty())
+                    absentMemberList.add(members.get(i).getUser().getNickname());
+                else {
+                    attendMemberList.add(members.get(i).getUser().getNickname());
+                }
+            }
+        } else {
+            for (int i = 0; i < members.size(); i++) {
                 Optional<StudyAttendanceVote> studyAttendanceVote = studyAttendanceVoteRepository.findByStudyMemberAndDate(members.get(i), studyDate);
                 if (studyAttendanceVote.isEmpty())
                     attendMemberList.add(members.get(i).getUser().getNickname());
@@ -128,15 +150,7 @@ public class StudyAttendanceService {
                 else
                     absentMemberList.add(members.get(i).getUser().getNickname());
             }
-        } else {
-            for (int i = 0; i < members.size(); i++) {
-                Optional<StudyAttendance> studyAttendance = studyAttendanceRepository.findByStudyMemberAndDate(members.get(i), studyDate);
-                if (studyAttendance.isEmpty())
-                    absentMemberList.add(members.get(i).getUser().getNickname());
-                else {
-                    attendMemberList.add(members.get(i).getUser().getNickname());
-                }
-            }
+
         }
         return StudyAttendanceAndAbsenceDto.builder()
                 .attendMemberList(attendMemberList)
