@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -22,6 +23,6 @@ public class StudySchedule {
     @JoinColumn(name = "study_group_id")
     private StudyGroup studyGroup;
     private String dayWeek;
-    private String startTime;
-    private String finishTime;
+    private LocalTime startTime;
+    private LocalTime finishTime;
 }
