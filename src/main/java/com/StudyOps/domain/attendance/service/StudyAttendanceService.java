@@ -54,15 +54,18 @@ public class StudyAttendanceService {
         StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
 
         //지각 계산 로직
-        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime attendTime = LocalDateTime.now();
         //현재 날짜의 요일을 구하고 ScheduleRepository에서 해당 스터디와 정보로 Schedule을 찾음
-        String currentDayWeek = currentTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
+        String currentDayWeek = attendTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
         StudySchedule studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeek(studyGroup, currentDayWeek).get();
 
         //출석시간과 스터디시작 시간 차이를 구함
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime attendTime = LocalTime.now();
-        LocalTime startTime = LocalTime.parse(studySchedule.getStartTime(), formatter);
+        LocalTime startTime = studySchedule.getStartTime();
+        LocalDateTime start = attendTime.with(startTime); //
+        if (attendTime.isBefore(start)) {
+            attendTime = attendTime.plusDays(1); // 일자 변경 처리
+        }
+
         Duration duration = Duration.between(startTime, attendTime);
         int timeDifference = (int) duration.toMinutes();
 

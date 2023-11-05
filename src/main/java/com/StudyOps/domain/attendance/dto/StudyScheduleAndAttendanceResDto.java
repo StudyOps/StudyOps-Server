@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Builder
 @Getter
@@ -21,9 +22,9 @@ public class StudyScheduleAndAttendanceResDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer lateTime;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String startTime;
+    private LocalTime startTime;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String finishTime;
+    private LocalTime finishTime;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalDateTime attendanceTime;
