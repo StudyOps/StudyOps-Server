@@ -17,7 +17,7 @@ public class StudyAttendanceController {
     private final StudyAttendanceService studyAttendanceService;
 
     @PostMapping("/schedules/attendances/{groupId}/{userId}")
-    public ResponseEntity<ApiResponse<Object>> createStudyGroup(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId) {
+    public ResponseEntity<ApiResponse<Object>> attendStudyDate(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId) {
 
         studyAttendanceService.attendStudyDate(groupId, userId);
 
