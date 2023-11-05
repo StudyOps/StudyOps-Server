@@ -35,6 +35,26 @@ public class StudyPenaltyService {
         3. 해당 스터디 그룹 스터디 멤버 전체 조회
         4. 멤버별로 오늘 해당 되는 날짜 출결 테이블에 없으면 불참 처리
      **/
+    @Scheduled(cron = "0 0 0/1 * * *")
+    public void updateAbsentStudyMember() {
+        //스터디 그룹 시작날짜가 현재 시간 이후인것만 전체 조회한다.
+        LocalTime now = LocalTime.now();
+        if(now.compareTo(LocalTime.of(0,0)) == 0) // 00시 일경우
+        {
+            List<StudyGroup> allGroups = studyGroupRepository.findAllByStartDateIsLessThanEqual(LocalDate.now().minusDays(1));
+
+            for (int i = 0; i < allGroups.size(); i++) {
+                StudyGroup studyGroup = allGroups.get(i);
+
+            }
+        }
+        else{
+
+
+        }
+
+
+    }
 
     public void deleteStudyMember(StudyMember studyMember){
         List<StudyPenalty> penalties = studyPenaltyRepository.findAllByStudyMember(studyMember);
