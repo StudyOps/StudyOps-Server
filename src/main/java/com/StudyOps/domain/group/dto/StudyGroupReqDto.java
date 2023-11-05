@@ -23,7 +23,7 @@ public class StudyGroupReqDto {
     private LocalDate startDate;
     private int absenceCost;
     private int lateCost;
-    private int allowedTime;
+    private int allowedTime = 100000;
     private String hostName;
     private List<StudyScheduleDto> schedules;
     private List<String> invitees;

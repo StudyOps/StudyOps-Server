@@ -61,7 +61,7 @@ public class StudyAttendanceService {
 
         //출석시간과 스터디시작 시간 차이를 구함
         LocalTime startTime = studySchedule.getStartTime();
-        LocalDateTime start = attendTime.with(startTime); //
+        LocalDateTime start = LocalDateTime.now().with(startTime); //
         if (attendTime.isBefore(start)) {
             attendTime = attendTime.plusDays(1); // 일자 변경 처리
         }
@@ -69,9 +69,7 @@ public class StudyAttendanceService {
         Duration duration = Duration.between(startTime, attendTime);
         int timeDifference = (int) duration.toMinutes();
 
-        if (timeDifference <= 0)
-            timeDifference = 0;
-        else{
+        if (timeDifference > studyGroup.getAllowedTime()) {
             StudyPenalty studyPenalty = StudyPenalty.builder()
                     .studyMember(studyMember)
                     .fine(studyGroup.getLateCost())
@@ -87,7 +85,7 @@ public class StudyAttendanceService {
                 .time(LocalDateTime.now())
                 .date(LocalDate.now())
                 .lateTime(timeDifference)
-                .isLate(timeDifference > 0)
+                .isLate(timeDifference > studyGroup.getAllowedTime())
                 .build();
         studyAttendanceRepository.save(studyAttendance);
     }

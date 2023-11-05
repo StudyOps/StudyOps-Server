@@ -1,10 +1,10 @@
 package com.StudyOps.domain.group.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -46,4 +46,5 @@ public class StudyGroup {
     public void changeAccount(String account) {
         this.account = account;
     }
+
 }
