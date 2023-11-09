@@ -1,5 +1,6 @@
 package com.StudyOps.domain.penalty.service;
 
+import com.StudyOps.domain.attendance.repository.StudyAttendanceRepository;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
@@ -8,6 +9,8 @@ import com.StudyOps.domain.penalty.dto.StudyGroupMemberPenaltyDto;
 import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
 import com.StudyOps.domain.penalty.entity.StudyPenalty;
 import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
+import com.StudyOps.domain.schedule.entity.StudySchedule;
+import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,8 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +33,8 @@ public class StudyPenaltyService {
     private final StudyPenaltyRepository studyPenaltyRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyScheduleRepository studyScheduleRepository;
+    private final StudyAttendanceRepository studyAttendanceRepository;
 
     //매 정각마다 불참자 정보 업데이트
     /**
@@ -35,16 +43,34 @@ public class StudyPenaltyService {
         3. 해당 스터디 그룹 스터디 멤버 전체 조회
         4. 멤버별로 오늘 해당 되는 날짜 출결 테이블에 없으면 불참 처리
      **/
-    @Scheduled(cron = "0 0 0/1 * * *")
+    @Scheduled(cron = "0 * * * * ?") //"0 0 0/1 * * *"
     public void updateAbsentStudyMember() {
-        //스터디 그룹 시작날짜가 현재 시간 이후인것만 전체 조회한다.
         LocalTime now = LocalTime.now();
         if(now.compareTo(LocalTime.of(0,0)) == 0) // 00시 일경우
         {
-            List<StudyGroup> allGroups = studyGroupRepository.findAllByStartDateIsLessThanEqual(LocalDate.now().minusDays(1));
+            //스터디 그룹 시작날짜가 현재 시간 이후인것만 전체 조회한다.
+            LocalDate target = LocalDate.now().minusDays(1);
+            List<StudyGroup> allGroups = studyGroupRepository.findAllByStartDateIsLessThanEqual(target);
 
+            // 반복문을 돌면서 하루전날이 스터디 요일인것과 끝나는시간이 23시 초과 00시이하인 스터디를 찾는다.
             for (int i = 0; i < allGroups.size(); i++) {
                 StudyGroup studyGroup = allGroups.get(i);
+                String dayOfWeek = target.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
+
+                Optional<StudySchedule> studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqual(studyGroup, dayOfWeek, now.minusHours(1),now);
+                if(studySchedule.isEmpty())
+                    continue;
+                List<StudyMember> members = studyMemberRepository.findAllByStudyGroup(studyGroup);
+                for(int j=0; i<members.size(); j++){
+                    StudyMember studyMember = members.get(j);
+                    if(studyAttendanceRepository.findByStudyMemberAndDate(studyMember,target).isEmpty());
+                    {
+
+                    }
+                }
+
+
+
 
             }
         }
