@@ -2,31 +2,29 @@ package com.StudyOps.domain.penalty.entity;
 
 import com.StudyOps.domain.member.entity.StudyMember;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
+
 @Entity
-@Getter
-@AllArgsConstructor
+@DiscriminatorColumn
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
-@Builder
-public class StudyPenalty {
-    @Id @GeneratedValue
-    @Column(name = "study_penalty_id")
+@AllArgsConstructor
+@SuperBuilder
+@Getter
+public abstract class Penalty {
+    @Id
+    @GeneratedValue
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_member_id")
     private StudyMember studyMember;
     private int fine;
     private Boolean isSettled;
-    private int lateTime;
     private LocalDate date;
-    /******************************************
-     지각인지 불참인지 여부, 지각 => true 불참 => false
-     ******************************************/
-    private Boolean lateAbsent;
 }

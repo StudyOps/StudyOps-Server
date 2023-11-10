@@ -88,8 +88,11 @@ public class StudyGroupService {
         //투표 테이블에서 찾은 studyMember 삭제
         studyAttendanceVoteService.deleteStudyMember(studyMember);
 
-        //벌금 테이블에서 찾은 studyMember 삭제
-        studyPenaltyService.deleteStudyMember(studyMember);
+        //지각벌금 테이블에서 찾은 studyMember 삭제
+        studyPenaltyService.deleteLateStudyMember(studyMember);
+
+        //불참벌금 테이블에서 찾은 studyMember 삭제
+        studyPenaltyService.deleteAbsentStudyMember(studyMember);
 
         //스터디 멤버 테이블에서 최종적으로 그 스터디멤버 삭제
         studyMemberRepository.delete(studyMember);

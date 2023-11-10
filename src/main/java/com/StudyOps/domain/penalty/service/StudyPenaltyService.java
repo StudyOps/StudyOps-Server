@@ -7,8 +7,9 @@ import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
 import com.StudyOps.domain.penalty.dto.StudyGroupMemberPenaltyDto;
 import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
-import com.StudyOps.domain.penalty.entity.StudyPenalty;
-import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
+import com.StudyOps.domain.penalty.entity.StudyAbsentPenalty;
+import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
+import com.StudyOps.domain.penalty.repository.PenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class StudyPenaltyService {
-    private final StudyPenaltyRepository studyPenaltyRepository;
+    private final PenaltyRepository penaltyRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyScheduleRepository studyScheduleRepository;
@@ -82,10 +80,16 @@ public class StudyPenaltyService {
 
     }
 
-    public void deleteStudyMember(StudyMember studyMember){
-        List<StudyPenalty> penalties = studyPenaltyRepository.findAllByStudyMember(studyMember);
+    public void deleteLateStudyMember(StudyMember studyMember){
+        List<StudyLatePenalty> penalties = penaltyRepository.findLatePenaltiesByStudyMember(studyMember);
         penalties.stream()
-                .forEach(penalty -> studyPenaltyRepository.delete(penalty));
+                .forEach(penalty -> penaltyRepository.delete(penalty));
+    }
+
+    public void deleteAbsentStudyMember(StudyMember studyMember){
+        List<StudyAbsentPenalty> penalties = penaltyRepository.findAbsentPenaltiesByStudyMember(studyMember);
+        penalties.stream()
+                .forEach(penalty -> penaltyRepository.delete(penalty));
     }
 
     public StudyGroupPenaltyInfoResDto getStudyPenaltyInfo(Long groupId) {
@@ -107,11 +111,16 @@ public class StudyPenaltyService {
                     .build());
 
             //스터디 멤버와 정산여부 필드 false값으로 studyPenalty조회한다.
-            List<StudyPenalty> notSettledPenalties = studyPenaltyRepository.findAllByStudyMemberAndIsSettled(studyMember, false);
-            int penaltySum = 0;
+            List<StudyLatePenalty> notSettledLatePenalties = penaltyRepository.findLatePenaltiesByStudyMemberAndIsSettled(studyMember,false);
+            List<StudyAbsentPenalty> notSettledAbsentPenalties = penaltyRepository.findAbsentPenaltiesByStudyMemberAndIsSettled(studyMember, false);
+            int penaltySum=0;
             // 각 penalty정보에 대하여 해당 멤버의 정산되지 않은 누적 벌금을 구한다.
-            for(int j=0; j<notSettledPenalties.size(); j++){
-                StudyPenalty notSettledPenalty = notSettledPenalties.get(i);
+            for(int j=0; j<notSettledLatePenalties.size(); j++){
+                StudyLatePenalty notSettledPenalty = notSettledLatePenalties.get(i);
+                penaltySum += notSettledPenalty.getFine();
+            }
+            for(int j=0; j<notSettledAbsentPenalties.size(); j++){
+                StudyAbsentPenalty notSettledPenalty = notSettledAbsentPenalties.get(i);
                 penaltySum += notSettledPenalty.getFine();
             }
             // 정산되지 않은 금액이 0이 아닐경우에만 dto리스트에 추가한다.

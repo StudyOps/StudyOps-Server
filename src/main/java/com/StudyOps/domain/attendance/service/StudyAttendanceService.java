@@ -10,8 +10,8 @@ import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
-import com.StudyOps.domain.penalty.entity.StudyPenalty;
-import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
+import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
+import com.StudyOps.domain.penalty.repository.PenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.user.entity.User;
@@ -36,7 +36,7 @@ public class StudyAttendanceService {
     private final StudyAttendanceRepository studyAttendanceRepository;
     private final StudyAttendanceVoteRepository studyAttendanceVoteRepository;
     private final StudyGroupRepository studyGroupRepository;
-    private final StudyPenaltyRepository studyPenaltyRepository;
+    private final PenaltyRepository penaltyRepository;
     private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyScheduleRepository studyScheduleRepository;
@@ -70,15 +70,14 @@ public class StudyAttendanceService {
         int timeDifference = (int) duration.toMinutes();
 
         if (timeDifference > studyGroup.getAllowedTime()) {
-            StudyPenalty studyPenalty = StudyPenalty.builder()
+            StudyLatePenalty studyLatePenalty = StudyLatePenalty.builder()
                     .studyMember(studyMember)
                     .fine(studyGroup.getLateCost())
                     .isSettled(false)
                     .lateTime(timeDifference)
                     .date(LocalDate.now())
-                    .lateAbsent(true)
                     .build();
-            studyPenaltyRepository.save(studyPenalty);
+            penaltyRepository.save(studyLatePenalty);
         }
         StudyAttendance studyAttendance = StudyAttendance.builder()
                 .studyMember(studyMember)
