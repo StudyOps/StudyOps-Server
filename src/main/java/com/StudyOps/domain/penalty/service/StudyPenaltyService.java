@@ -142,4 +142,17 @@ public class StudyPenaltyService {
                 .notSettledPenalties(notSettledPenaltyDtos)
                 .build();
     }
+
+    public StudyGroupNotSettledDayDto getNotSettledDay(Long groupId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        List<LocalDate> notSettledDays = new ArrayList<>();
+
+        for(LocalDate start = studyGroup.getStartDate(); start.isBefore(LocalDate.now()) || start.equals(LocalDate.now()); start = start.plusDays(1)){
+            if(!(studyPenaltyRepository.findAllByStudyGroupAndDate(studyGroup,start).isEmpty()))
+                notSettledDays.add(start);
+        }
+        return StudyGroupNotSettledDayDto.builder()
+                .notSettledDays(notSettledDays)
+                .build();
+    }
 }

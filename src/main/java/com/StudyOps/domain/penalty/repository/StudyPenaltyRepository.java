@@ -1,9 +1,11 @@
 package com.StudyOps.domain.penalty.repository;
 
+import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.penalty.entity.StudyPenalty;
 import com.StudyOps.domain.penalty.entity.StudyAbsentStudyPenalty;
 import com.StudyOps.domain.penalty.entity.StudyLateStudyPenalty;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +19,6 @@ public interface StudyPenaltyRepository extends JpaRepository<StudyPenalty, Long
     List<StudyAbsentStudyPenalty> findAbsentPenaltiesByStudyMember(StudyMember studyMember);
     List<StudyLateStudyPenalty> findLatePenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
     List<StudyAbsentStudyPenalty> findAbsentPenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
+    List<StudyPenalty> findAllByStudyGroupAndDate(StudyGroup studyGroup, LocalDate date);
     Optional<StudyPenalty> findByStudyMemberAndDate(StudyMember studyMember, LocalDate date);
 }
