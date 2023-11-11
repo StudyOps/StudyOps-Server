@@ -7,9 +7,9 @@ import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
 import com.StudyOps.domain.penalty.dto.StudyGroupMemberPenaltyDto;
 import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
-import com.StudyOps.domain.penalty.entity.StudyAbsentPenalty;
-import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
-import com.StudyOps.domain.penalty.repository.PenaltyRepository;
+import com.StudyOps.domain.penalty.entity.StudyAbsentStudyPenalty;
+import com.StudyOps.domain.penalty.entity.StudyLateStudyPenalty;
+import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.*;
 @Transactional
 @Slf4j
 public class StudyPenaltyService {
-    private final PenaltyRepository penaltyRepository;
+    private final StudyPenaltyRepository studyPenaltyRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyScheduleRepository studyScheduleRepository;
@@ -44,52 +44,54 @@ public class StudyPenaltyService {
     @Scheduled(cron = "0 * * * * ?") //"0 0 0/1 * * *"
     public void updateAbsentStudyMember() {
         LocalTime now = LocalTime.now();
+        LocalDate target;
         if(now.compareTo(LocalTime.of(0,0)) == 0) // 00시 일경우
-        {
-            //스터디 그룹 시작날짜가 현재 시간 이후인것만 전체 조회한다.
-            LocalDate target = LocalDate.now().minusDays(1);
-            List<StudyGroup> allGroups = studyGroupRepository.findAllByStartDateIsLessThanEqual(target);
+            target = LocalDate.now().minusDays(1);
+        else
+            target = LocalDate.now();
+        updateAbsentMemberLogic(target);
+    }
+    private void updateAbsentMemberLogic(LocalDate target){
+        //스터디 그룹 시작날짜가 현재 시간 이전인것만 전체 조회한다.
+        List<StudyGroup> allGroups = studyGroupRepository.findAllByStartDateIsLessThanEqual(target);
 
-            // 반복문을 돌면서 하루전날이 스터디 요일인것과 끝나는시간이 23시 초과 00시이하인 스터디를 찾는다.
-            for (int i = 0; i < allGroups.size(); i++) {
-                StudyGroup studyGroup = allGroups.get(i);
-                String dayOfWeek = target.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
+        LocalTime now = LocalTime.now();
+        for (int i = 0; i < allGroups.size(); i++) {
+            StudyGroup studyGroup = allGroups.get(i);
+            String dayOfWeek = target.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
 
-                Optional<StudySchedule> studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqual(studyGroup, dayOfWeek, now.minusHours(1),now);
-                if(studySchedule.isEmpty())
+            Optional<StudySchedule> studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqual(studyGroup, dayOfWeek, now.minusHours(1),now);
+            if(studySchedule.isEmpty())
+                continue;
+            List<StudyMember> members = studyMemberRepository.findAllByStudyGroup(studyGroup);
+            for(int j=0; j<members.size(); j++){
+                StudyMember studyMember = members.get(j);
+                if(studyPenaltyRepository.findByStudyMemberAndDate(studyMember,target).isPresent())
                     continue;
-                List<StudyMember> members = studyMemberRepository.findAllByStudyGroup(studyGroup);
-                for(int j=0; i<members.size(); j++){
-                    StudyMember studyMember = members.get(j);
-                    if(studyAttendanceRepository.findByStudyMemberAndDate(studyMember,target).isEmpty());
-                    {
-
-                    }
+                if(studyAttendanceRepository.findByStudyMemberAndDate(studyMember,target).isEmpty());
+                {
+                    StudyAbsentStudyPenalty studyAbsentPenalty = StudyAbsentStudyPenalty.builder()
+                            .studyMember(studyMember)
+                            .fine(studyGroup.getAbsenceCost())
+                            .isSettled(false)
+                            .date(target)
+                            .build();
+                    studyPenaltyRepository.save(studyAbsentPenalty);
                 }
-
-
-
-
             }
         }
-        else{
-
-
-        }
-
-
     }
 
     public void deleteLateStudyMember(StudyMember studyMember){
-        List<StudyLatePenalty> penalties = penaltyRepository.findLatePenaltiesByStudyMember(studyMember);
+        List<StudyLateStudyPenalty> penalties = studyPenaltyRepository.findLatePenaltiesByStudyMember(studyMember);
         penalties.stream()
-                .forEach(penalty -> penaltyRepository.delete(penalty));
+                .forEach(penalty -> studyPenaltyRepository.delete(penalty));
     }
 
     public void deleteAbsentStudyMember(StudyMember studyMember){
-        List<StudyAbsentPenalty> penalties = penaltyRepository.findAbsentPenaltiesByStudyMember(studyMember);
+        List<StudyAbsentStudyPenalty> penalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMember(studyMember);
         penalties.stream()
-                .forEach(penalty -> penaltyRepository.delete(penalty));
+                .forEach(penalty -> studyPenaltyRepository.delete(penalty));
     }
 
     public StudyGroupPenaltyInfoResDto getStudyPenaltyInfo(Long groupId) {
@@ -111,16 +113,16 @@ public class StudyPenaltyService {
                     .build());
 
             //스터디 멤버와 정산여부 필드 false값으로 studyPenalty조회한다.
-            List<StudyLatePenalty> notSettledLatePenalties = penaltyRepository.findLatePenaltiesByStudyMemberAndIsSettled(studyMember,false);
-            List<StudyAbsentPenalty> notSettledAbsentPenalties = penaltyRepository.findAbsentPenaltiesByStudyMemberAndIsSettled(studyMember, false);
+            List<StudyLateStudyPenalty> notSettledLatePenalties = studyPenaltyRepository.findLatePenaltiesByStudyMemberAndIsSettled(studyMember,false);
+            List<StudyAbsentStudyPenalty> notSettledAbsentPenalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMemberAndIsSettled(studyMember, false);
             int penaltySum=0;
             // 각 penalty정보에 대하여 해당 멤버의 정산되지 않은 누적 벌금을 구한다.
             for(int j=0; j<notSettledLatePenalties.size(); j++){
-                StudyLatePenalty notSettledPenalty = notSettledLatePenalties.get(i);
+                StudyLateStudyPenalty notSettledPenalty = notSettledLatePenalties.get(i);
                 penaltySum += notSettledPenalty.getFine();
             }
             for(int j=0; j<notSettledAbsentPenalties.size(); j++){
-                StudyAbsentPenalty notSettledPenalty = notSettledAbsentPenalties.get(i);
+                StudyAbsentStudyPenalty notSettledPenalty = notSettledAbsentPenalties.get(i);
                 penaltySum += notSettledPenalty.getFine();
             }
             // 정산되지 않은 금액이 0이 아닐경우에만 dto리스트에 추가한다.

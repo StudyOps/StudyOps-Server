@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @SuperBuilder
-@DiscriminatorValue("A")
-public class StudyAbsentPenalty extends Penalty {
-
+@DiscriminatorValue("L")
+public class StudyLateStudyPenalty extends StudyPenalty {
+    private int lateTime;
 }

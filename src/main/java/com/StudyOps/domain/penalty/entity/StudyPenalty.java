@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @Getter
-public abstract class Penalty {
+public abstract class StudyPenalty {
     @Id
     @GeneratedValue
     private Long id;
