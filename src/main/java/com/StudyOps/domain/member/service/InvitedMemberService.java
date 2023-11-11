@@ -92,7 +92,7 @@ public class InvitedMemberService {
                             .hostName(studyGroup.getHostName())
                             .hostStatus(false)
                             .headCount(studyGroup.getHeadCount())
-                            .absenceCost(studyGroup.getAbsenceCost())
+                            .absenceCost(studyGroup.getAbsentCost())
                             .lateCost(studyGroup.getLateCost())
                             .startDate(studyGroup.getStartDate())
                             .build();

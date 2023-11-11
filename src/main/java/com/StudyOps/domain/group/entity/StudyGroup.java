@@ -21,7 +21,7 @@ public class StudyGroup {
     private String name;
     private String intro;
     private String rule;
-    private int absenceCost;
+    private int absentCost;
     private int lateCost;
     private int totalCost;
     private int allowedTime;

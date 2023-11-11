@@ -3,9 +3,8 @@ package com.StudyOps.domain.penalty.repository;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.penalty.entity.StudyPenalty;
-import com.StudyOps.domain.penalty.entity.StudyAbsentStudyPenalty;
-import com.StudyOps.domain.penalty.entity.StudyLateStudyPenalty;
-import net.bytebuddy.asm.Advice;
+import com.StudyOps.domain.penalty.entity.StudyAbsentPenalty;
+import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,10 +14,12 @@ import java.util.Optional;
 
 @Repository
 public interface StudyPenaltyRepository extends JpaRepository<StudyPenalty, Long> {
-    List<StudyLateStudyPenalty> findLatePenaltiesByStudyMember(StudyMember studyMember);
-    List<StudyAbsentStudyPenalty> findAbsentPenaltiesByStudyMember(StudyMember studyMember);
-    List<StudyLateStudyPenalty> findLatePenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
-    List<StudyAbsentStudyPenalty> findAbsentPenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
+    List<StudyLatePenalty> findLatePenaltiesByStudyMember(StudyMember studyMember);
+    List<StudyAbsentPenalty> findAbsentPenaltiesByStudyMember(StudyMember studyMember);
+    List<StudyLatePenalty> findLatePenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
+    List<StudyAbsentPenalty> findAbsentPenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
     List<StudyPenalty> findAllByStudyGroupAndDate(StudyGroup studyGroup, LocalDate date);
+    List<StudyLatePenalty> findAllLatePenaltyByStudyGroupAndDate(StudyGroup studyGroup, LocalDate date);
+    List<StudyAbsentPenalty> findAllAbsentPenaltyByStudyGroupAndDate(StudyGroup studyGroup, LocalDate date);
     Optional<StudyPenalty> findByStudyMemberAndDate(StudyMember studyMember, LocalDate date);
 }

@@ -126,7 +126,7 @@ public class StudyGroupService {
                             .hostName(studyGroup.getHostName())
                             .hostStatus(studyGroup.getHostName().equals(user.getNickname()))
                             .headCount(studyGroup.getHeadCount())
-                            .absenceCost(studyGroup.getAbsenceCost())
+                            .absenceCost(studyGroup.getAbsentCost())
                             .lateCost(studyGroup.getLateCost())
                             .startDate(studyGroup.getStartDate())
                             .build();
@@ -165,7 +165,7 @@ public class StudyGroupService {
                 .schedules(schedules)
                 .allowedTime(studyGroup.getAllowedTime())
                 .lateCost(studyGroup.getLateCost())
-                .absenceCost(studyGroup.getAbsenceCost())
+                .absenceCost(studyGroup.getAbsentCost())
                 .build();
 
         return studyGroupInfoResDto;

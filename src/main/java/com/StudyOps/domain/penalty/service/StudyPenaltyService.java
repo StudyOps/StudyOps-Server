@@ -5,11 +5,9 @@ import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
-import com.StudyOps.domain.penalty.dto.StudyGroupMemberPenaltyDto;
-import com.StudyOps.domain.penalty.dto.StudyGroupNotSettledDayDto;
-import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
-import com.StudyOps.domain.penalty.entity.StudyAbsentStudyPenalty;
-import com.StudyOps.domain.penalty.entity.StudyLateStudyPenalty;
+import com.StudyOps.domain.penalty.dto.*;
+import com.StudyOps.domain.penalty.entity.StudyAbsentPenalty;
+import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
 import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
@@ -71,10 +69,10 @@ public class StudyPenaltyService {
                     continue;
                 if(studyAttendanceRepository.findByStudyMemberAndDate(studyMember,target).isEmpty());
                 {
-                    StudyAbsentStudyPenalty studyAbsentPenalty = StudyAbsentStudyPenalty.builder()
+                    StudyAbsentPenalty studyAbsentPenalty = StudyAbsentPenalty.builder()
                             .studyMember(studyMember)
                             .studyGroup(studyGroup)
-                            .fine(studyGroup.getAbsenceCost())
+                            .fine(studyGroup.getAbsentCost())
                             .isSettled(false)
                             .date(target)
                             .build();
@@ -85,13 +83,13 @@ public class StudyPenaltyService {
     }
 
     public void deleteLateStudyMember(StudyMember studyMember){
-        List<StudyLateStudyPenalty> penalties = studyPenaltyRepository.findLatePenaltiesByStudyMember(studyMember);
+        List<StudyLatePenalty> penalties = studyPenaltyRepository.findLatePenaltiesByStudyMember(studyMember);
         penalties.stream()
                 .forEach(penalty -> studyPenaltyRepository.delete(penalty));
     }
 
     public void deleteAbsentStudyMember(StudyMember studyMember){
-        List<StudyAbsentStudyPenalty> penalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMember(studyMember);
+        List<StudyAbsentPenalty> penalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMember(studyMember);
         penalties.stream()
                 .forEach(penalty -> studyPenaltyRepository.delete(penalty));
     }
@@ -115,16 +113,16 @@ public class StudyPenaltyService {
                     .build());
 
             //스터디 멤버와 정산여부 필드 false값으로 studyPenalty조회한다.
-            List<StudyLateStudyPenalty> notSettledLatePenalties = studyPenaltyRepository.findLatePenaltiesByStudyMemberAndIsSettled(studyMember,false);
-            List<StudyAbsentStudyPenalty> notSettledAbsentPenalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMemberAndIsSettled(studyMember, false);
+            List<StudyLatePenalty> notSettledLatePenalties = studyPenaltyRepository.findLatePenaltiesByStudyMemberAndIsSettled(studyMember,false);
+            List<StudyAbsentPenalty> notSettledAbsentPenalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMemberAndIsSettled(studyMember, false);
             int penaltySum=0;
             // 각 penalty정보에 대하여 해당 멤버의 정산되지 않은 누적 벌금을 구한다.
             for(int j=0; j<notSettledLatePenalties.size(); j++){
-                StudyLateStudyPenalty notSettledPenalty = notSettledLatePenalties.get(i);
+                StudyLatePenalty notSettledPenalty = notSettledLatePenalties.get(i);
                 penaltySum += notSettledPenalty.getFine();
             }
             for(int j=0; j<notSettledAbsentPenalties.size(); j++){
-                StudyAbsentStudyPenalty notSettledPenalty = notSettledAbsentPenalties.get(i);
+                StudyAbsentPenalty notSettledPenalty = notSettledAbsentPenalties.get(i);
                 penaltySum += notSettledPenalty.getFine();
             }
             // 정산되지 않은 금액이 0이 아닐경우에만 dto리스트에 추가한다.
@@ -154,5 +152,43 @@ public class StudyPenaltyService {
         return StudyGroupNotSettledDayDto.builder()
                 .notSettledDays(notSettledDays)
                 .build();
+    }
+
+    public StudyGroupPenaltyInfoByDateResDto getPenaltyInfoByDate(Long groupId, LocalDate date) {
+
+        List<StudyGroupLateMemberInfoDto> lateMembers = new ArrayList<>();
+        List<StudyGroupAbsentMemberInfoDto> absentMembers = new ArrayList<>();
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        List<StudyLatePenalty> studyLatePenalties = studyPenaltyRepository.findAllLatePenaltyByStudyGroupAndDate(studyGroup, date);
+        List<StudyAbsentPenalty> studyAbsentPenalties = studyPenaltyRepository.findAllAbsentPenaltyByStudyGroupAndDate(studyGroup, date);
+
+        for(int i=0; i<studyLatePenalties.size(); i++){
+            StudyLatePenalty studyLatePenalty = studyLatePenalties.get(i);
+            StudyMember studyMember = studyLatePenalty.getStudyMember();
+
+            lateMembers.add(StudyGroupLateMemberInfoDto.builder()
+                    .penaltyId(studyLatePenalty.getId())
+                    .name(studyMember.getUser().getNickname())
+                    .isSettled(studyLatePenalty.getIsSettled())
+                    .lateTime(studyLatePenalty.getLateTime())
+                    .build());
+        }
+        for(int i=0; i<studyAbsentPenalties.size(); i++){
+            StudyAbsentPenalty studyAbsentPenalty = studyAbsentPenalties.get(i);
+            StudyMember studyMember = studyAbsentPenalty.getStudyMember();
+
+            absentMembers.add(StudyGroupAbsentMemberInfoDto.builder()
+                    .penaltyId(studyAbsentPenalty.getId())
+                    .name(studyMember.getUser().getNickname())
+                    .isSettled(studyAbsentPenalty.getIsSettled())
+                    .build());
+        }
+       return StudyGroupPenaltyInfoByDateResDto.builder()
+               .absentMembers(absentMembers)
+               .lateMembers(lateMembers)
+               .lateCost(studyGroup.getLateCost())
+               .absentCost(studyGroup.getAbsentCost())
+               .build();
     }
 }

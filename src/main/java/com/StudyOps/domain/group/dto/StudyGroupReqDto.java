@@ -34,7 +34,7 @@ public class StudyGroupReqDto {
                 .intro(intro)
                 .rule(rule)
                 .startDate(startDate)
-                .absenceCost(absenceCost)
+                .absentCost(absenceCost)
                 .lateCost(lateCost)
                 .allowedTime(allowedTime)
                 .totalCost(0)
