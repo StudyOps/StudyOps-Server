@@ -8,6 +8,7 @@ import com.StudyOps.domain.member.repository.StudyMemberRepository;
 import com.StudyOps.domain.penalty.dto.*;
 import com.StudyOps.domain.penalty.entity.StudyAbsentPenalty;
 import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
+import com.StudyOps.domain.penalty.entity.StudyPenalty;
 import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
@@ -190,5 +191,16 @@ public class StudyPenaltyService {
                .lateCost(studyGroup.getLateCost())
                .absentCost(studyGroup.getAbsentCost())
                .build();
+    }
+
+    public void settleStudyGroupPenalty(Long penaltyId) {
+
+        StudyPenalty studyPenalty = studyPenaltyRepository.findById(penaltyId).get();
+        StudyMember studyMember = studyPenalty.getStudyMember();
+        StudyGroup studyGroup = studyPenalty.getStudyGroup();
+
+        studyPenalty.changeToSettled();
+        studyMember.plusTotalPenalty(studyPenalty.getFine());
+        studyGroup.plusTotalCost(studyPenalty.getFine());
     }
 }

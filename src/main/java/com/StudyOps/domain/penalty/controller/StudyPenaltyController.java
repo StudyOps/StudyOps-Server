@@ -8,10 +8,7 @@ import com.StudyOps.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,7 +29,7 @@ public class StudyPenaltyController {
     }
 
     @GetMapping("/penalty/{groupId}/dates")
-    public ResponseEntity<ApiResponse<StudyGroupNotSettledDayDto>> getNotSettledDay(@PathVariable(value = "groupId") Long groupId){
+    public ResponseEntity<ApiResponse<StudyGroupNotSettledDayDto>> getNotSettledDay(@PathVariable(value = "groupId") Long groupId) {
 
         ApiResponse<StudyGroupNotSettledDayDto> successResponse = new ApiResponse<>(NOT_SETTLED_DAY_GET_SUCCESS, studyPenaltyService.getNotSettledDay(groupId));
 
@@ -40,9 +37,19 @@ public class StudyPenaltyController {
     }
 
     @GetMapping("/penalty/{groupId}/date")
-    public ResponseEntity<ApiResponse<StudyGroupPenaltyInfoByDateResDto>> getPenaltyInfoByDate(@PathVariable(value = "groupId") Long groupId, @RequestParam LocalDate date){
+    public ResponseEntity<ApiResponse<StudyGroupPenaltyInfoByDateResDto>> getPenaltyInfoByDate(@PathVariable(value = "groupId") Long groupId, @RequestParam LocalDate date) {
 
-        ApiResponse<StudyGroupPenaltyInfoByDateResDto> successResponse = new ApiResponse<>(PENALTY_INFO_BY_DATE_GET_SUCCESS, studyPenaltyService.getPenaltyInfoByDate(groupId,date));
+        ApiResponse<StudyGroupPenaltyInfoByDateResDto> successResponse = new ApiResponse<>(PENALTY_INFO_BY_DATE_GET_SUCCESS, studyPenaltyService.getPenaltyInfoByDate(groupId, date));
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+
+    @PatchMapping("/penalty/{penaltyId}")
+    public ResponseEntity<ApiResponse<Object>> settleStudyGroupPenalty(@PathVariable(value = "penaltyId") Long penaltyId) {
+
+        studyPenaltyService.settleStudyGroupPenalty(penaltyId);
+
+        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_SETTLED_GET_SUCCESS);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

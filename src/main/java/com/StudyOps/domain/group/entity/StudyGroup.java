@@ -46,5 +46,7 @@ public class StudyGroup {
     public void changeAccount(String account) {
         this.account = account;
     }
-
+    public void plusTotalCost(int cost){
+        this.totalCost += cost;
+    }
 }

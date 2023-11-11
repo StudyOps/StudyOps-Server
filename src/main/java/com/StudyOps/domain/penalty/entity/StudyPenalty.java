@@ -32,4 +32,8 @@ public abstract class StudyPenalty {
     private int fine;
     private Boolean isSettled;
     private LocalDate date;
+
+    public void changeToSettled(){
+        this.isSettled = true;
+    }
 }

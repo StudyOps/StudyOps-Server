@@ -25,7 +25,8 @@ public enum ApiResponseStatus {
     STUDY_GROUP_ACCOUNT_CHANGE_SUCCESS(true,200,"스터디 그룹 벌금 계좌 수정에 성공하였습니다."),
     STUDY_PENALTY_INFO_GET_SUCCESS(true,200, "스터디 그룹 벌금 정보 조회에 성공하였습니다."),
     NOT_SETTLED_DAY_GET_SUCCESS(true,200,"스터디 그룹 벌금 미정산일 조회에 성공하였습니다."),
-    PENALTY_INFO_BY_DATE_GET_SUCCESS(true, 200, "스터디 그룹 해당 날짜 벌금 정산 정보 조회에 성공하였습니다.");
+    PENALTY_INFO_BY_DATE_GET_SUCCESS(true, 200, "스터디 그룹 해당 날짜 벌금 정산 정보 조회에 성공하였습니다."),
+    PENALTY_SETTLED_GET_SUCCESS(true,200,"벌금 정산에 성공하였습니다");
     private final boolean isSuccess;
     private final int status;
     private final String message;

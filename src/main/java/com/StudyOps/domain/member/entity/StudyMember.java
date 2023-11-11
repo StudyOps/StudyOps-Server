@@ -30,4 +30,8 @@ public class StudyMember {
     private Boolean hostStatus;
     private int totalPenalty;
     private LocalDate joinDate;
+
+    public void plusTotalPenalty(int cost){
+        this.totalPenalty += cost;
+    }
 }
