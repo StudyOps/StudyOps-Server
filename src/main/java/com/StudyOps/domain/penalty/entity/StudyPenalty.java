@@ -1,5 +1,6 @@
 package com.StudyOps.domain.penalty.entity;
 
+import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.member.entity.StudyMember;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,10 @@ public abstract class StudyPenalty {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_member_id")
     private StudyMember studyMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_group_id")
+    private StudyGroup studyGroup;
     private int fine;
     private Boolean isSettled;
     private LocalDate date;

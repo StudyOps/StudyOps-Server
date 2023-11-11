@@ -1,6 +1,7 @@
 package com.StudyOps.domain.penalty.controller;
 
 import com.StudyOps.domain.group.dto.StudyGroupResDto;
+import com.StudyOps.domain.penalty.dto.StudyGroupNotSettledDayDto;
 import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
 import com.StudyOps.domain.penalty.service.StudyPenaltyService;
 import com.StudyOps.global.common.ApiResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.StudyOps.global.common.ApiResponseStatus.NOT_SETTLED_DAY_GET_SUCCESS;
 import static com.StudyOps.global.common.ApiResponseStatus.STUDY_PENALTY_INFO_GET_SUCCESS;
 
 @RestController
@@ -24,6 +26,14 @@ public class StudyPenaltyController {
     public ResponseEntity<ApiResponse<StudyGroupPenaltyInfoResDto>> getStudyPenaltyInfo(@PathVariable(value = "groupId") Long groupId) {
 
         ApiResponse<StudyGroupPenaltyInfoResDto> successResponse = new ApiResponse<>(STUDY_PENALTY_INFO_GET_SUCCESS, studyPenaltyService.getStudyPenaltyInfo(groupId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+
+    @GetMapping("/penalty/{groupId}/dates")
+    public ResponseEntity<ApiResponse<StudyGroupNotSettledDayDto>> getNotSettledDay(@PathVariable(value = "groupId") Long groupId){
+
+        ApiResponse<StudyGroupNotSettledDayDto> successResponse = new ApiResponse<>(NOT_SETTLED_DAY_GET_SUCCESS, studyPenaltyService.getNotSettledDay(groupId));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

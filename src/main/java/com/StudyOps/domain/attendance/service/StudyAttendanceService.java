@@ -72,6 +72,7 @@ public class StudyAttendanceService {
         if (timeDifference > studyGroup.getAllowedTime()) {
             StudyLateStudyPenalty studyLatePenalty = StudyLateStudyPenalty.builder()
                     .studyMember(studyMember)
+                    .studyGroup(studyGroup)
                     .fine(studyGroup.getLateCost())
                     .isSettled(false)
                     .lateTime(timeDifference)

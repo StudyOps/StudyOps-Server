@@ -6,6 +6,7 @@ import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
 import com.StudyOps.domain.penalty.dto.StudyGroupMemberPenaltyDto;
+import com.StudyOps.domain.penalty.dto.StudyGroupNotSettledDayDto;
 import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
 import com.StudyOps.domain.penalty.entity.StudyAbsentStudyPenalty;
 import com.StudyOps.domain.penalty.entity.StudyLateStudyPenalty;
@@ -72,6 +73,7 @@ public class StudyPenaltyService {
                 {
                     StudyAbsentStudyPenalty studyAbsentPenalty = StudyAbsentStudyPenalty.builder()
                             .studyMember(studyMember)
+                            .studyGroup(studyGroup)
                             .fine(studyGroup.getAbsenceCost())
                             .isSettled(false)
                             .date(target)
