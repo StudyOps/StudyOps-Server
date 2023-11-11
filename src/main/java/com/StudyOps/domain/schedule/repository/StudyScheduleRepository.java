@@ -15,5 +15,5 @@ public interface StudyScheduleRepository extends JpaRepository<StudySchedule, Lo
 
     Optional<StudySchedule> findByStudyGroupAndDayWeek(StudyGroup studyGroup, String currentDayWeek);
     Optional<StudySchedule> findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqual(StudyGroup studyGroup, String currentDayWeek, LocalTime start, LocalTime finish);
-
+    Optional<StudySchedule> findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqualOrFinishTimeEquals(StudyGroup studyGroup, String currentDayWeek, LocalTime start, LocalTime finish, LocalTime midnight);
 }

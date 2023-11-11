@@ -60,7 +60,13 @@ public class StudyPenaltyService {
             StudyGroup studyGroup = allGroups.get(i);
             String dayOfWeek = target.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
 
-            Optional<StudySchedule> studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqual(studyGroup, dayOfWeek, now.minusHours(1),now);
+            Optional<StudySchedule> studySchedule;
+            if(now.compareTo(LocalTime.of(0,0)) == 0) {
+                studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqualOrFinishTimeEquals(studyGroup, dayOfWeek, now.minusHours(1), now.minusMinutes(1), LocalTime.of(0, 0));
+            }
+            else{
+                studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeekAndFinishTimeGreaterThanAndFinishTimeLessThanEqual(studyGroup,dayOfWeek,now.minusHours(1),now);
+            }
             if(studySchedule.isEmpty())
                 continue;
             List<StudyMember> members = studyMemberRepository.findAllByStudyGroup(studyGroup);
