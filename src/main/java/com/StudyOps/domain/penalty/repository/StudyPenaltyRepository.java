@@ -16,10 +16,12 @@ import java.util.Optional;
 public interface StudyPenaltyRepository extends JpaRepository<StudyPenalty, Long> {
     List<StudyLatePenalty> findLatePenaltiesByStudyMember(StudyMember studyMember);
     List<StudyAbsentPenalty> findAbsentPenaltiesByStudyMember(StudyMember studyMember);
-    List<StudyLatePenalty> findLatePenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
-    List<StudyAbsentPenalty> findAbsentPenaltiesByStudyMemberAndIsSettled(StudyMember studyMember, Boolean isSettled);
-    List<StudyPenalty> findAllByStudyGroupAndDate(StudyGroup studyGroup, LocalDate date);
-    List<StudyLatePenalty> findAllLatePenaltyByStudyGroupAndDate(StudyGroup studyGroup, LocalDate date);
-    List<StudyAbsentPenalty> findAllAbsentPenaltyByStudyGroupAndDate(StudyGroup studyGroup, LocalDate date);
+    List<StudyLatePenalty> findLatePenaltiesByStudyMemberAndIsSettledAndIsExempted(StudyMember studyMember, Boolean isSettled, Boolean isExempted);
+    List<StudyAbsentPenalty> findAbsentPenaltiesByStudyMemberAndIsSettledAndIsExempted(StudyMember studyMember, Boolean isSettled, Boolean isExempted);
+    List<StudyPenalty> findAllByStudyGroupAndDateAndIsSettledAndIsExempted(StudyGroup studyGroup, LocalDate date, Boolean isSettled, Boolean isExempted);
+    List<StudyLatePenalty> findAllLatePenaltyByStudyGroupAndDateAndIsExempted(StudyGroup studyGroup, LocalDate date, Boolean isExempted);
+    List<StudyAbsentPenalty> findAllAbsentPenaltyByStudyGroupAndDateAndIsExempted(StudyGroup studyGroup, LocalDate date, Boolean isExempted);
     Optional<StudyPenalty> findByStudyMemberAndDate(StudyMember studyMember, LocalDate date);
+    List<StudyAbsentPenalty> findAllAbsentPenaltiesByStudyGroupAndDateBetweenAndIsSettledAndIsExempted(StudyGroup studyGroup, LocalDate start, LocalDate finish, Boolean isSettled, Boolean isExempted);
+    List<StudyLatePenalty> findAllLatePenaltiesByStudyGroupAndDateBetweenAndIsSettledAndIsExempted(StudyGroup studyGroup, LocalDate start, LocalDate finish, Boolean isSettled, Boolean isExempted);
 }

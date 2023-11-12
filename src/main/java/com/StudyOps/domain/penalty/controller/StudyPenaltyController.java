@@ -3,9 +3,11 @@ package com.StudyOps.domain.penalty.controller;
 import com.StudyOps.domain.penalty.dto.StudyGroupNotSettledDayDto;
 import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoByDateResDto;
 import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
+import com.StudyOps.domain.penalty.dto.StudyPenaltySettleReqDto;
 import com.StudyOps.domain.penalty.service.StudyPenaltyService;
 import com.StudyOps.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +39,7 @@ public class StudyPenaltyController {
     }
 
     @GetMapping("/penalty/{groupId}/date")
-    public ResponseEntity<ApiResponse<StudyGroupPenaltyInfoByDateResDto>> getPenaltyInfoByDate(@PathVariable(value = "groupId") Long groupId, @RequestParam LocalDate date) {
+    public ResponseEntity<ApiResponse<StudyGroupPenaltyInfoByDateResDto>> getPenaltyInfoByDate(@PathVariable(value = "groupId") Long groupId, @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         ApiResponse<StudyGroupPenaltyInfoByDateResDto> successResponse = new ApiResponse<>(PENALTY_INFO_BY_DATE_GET_SUCCESS, studyPenaltyService.getPenaltyInfoByDate(groupId, date));
 
@@ -49,8 +51,37 @@ public class StudyPenaltyController {
 
         studyPenaltyService.settleStudyGroupPenalty(penaltyId);
 
-        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_SETTLED_GET_SUCCESS);
+        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_SETTLED_SUCCESS);
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
+
+    @GetMapping("/penalty/{groupId}/between")
+    public ResponseEntity<ApiResponse<Object>> getPenaltyInfoByBetweenDate(@PathVariable(value = "groupId") Long groupId, @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start, @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finish) {
+
+        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_INFO_BY_BETWEEN_DATE_GET_SUCCESS, studyPenaltyService.getPenaltyInfoByBetweenDate(groupId,start,finish));
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+
+    @PatchMapping("/penalty")
+    public ResponseEntity<ApiResponse<Object>> settleStudyGroupPenalties(@RequestBody StudyPenaltySettleReqDto studyPenaltySettleReqDto) {
+
+        studyPenaltyService.settleStudyGroupPenalties(studyPenaltySettleReqDto);
+
+        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_SETTLED_SUCCESS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+
+    @PatchMapping("/penalty/exemption/{penaltyId}")
+    public ResponseEntity<ApiResponse<Object>> exemptStudyGroupPenalties(@PathVariable Long penaltyId) {
+
+        studyPenaltyService.exemptStudyGroupPenalty(penaltyId);
+
+        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_EXEMPT_SUCCESS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+
 }

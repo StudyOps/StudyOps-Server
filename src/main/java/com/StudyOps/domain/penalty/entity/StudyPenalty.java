@@ -31,9 +31,11 @@ public abstract class StudyPenalty {
     private StudyGroup studyGroup;
     private int fine;
     private Boolean isSettled;
+    private Boolean isExempted;
     private LocalDate date;
 
     public void changeToSettled(){
         this.isSettled = true;
     }
+    public void changeToExempted(){this.isExempted = true; }
 }

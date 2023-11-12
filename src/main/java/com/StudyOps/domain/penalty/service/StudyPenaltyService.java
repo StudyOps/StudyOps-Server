@@ -81,6 +81,7 @@ public class StudyPenaltyService {
                             .studyGroup(studyGroup)
                             .fine(studyGroup.getAbsentCost())
                             .isSettled(false)
+                            .isExempted(false)
                             .date(target)
                             .build();
                     studyPenaltyRepository.save(studyAbsentPenalty);
@@ -120,16 +121,16 @@ public class StudyPenaltyService {
                     .build());
 
             //스터디 멤버와 정산여부 필드 false값으로 studyPenalty조회한다.
-            List<StudyLatePenalty> notSettledLatePenalties = studyPenaltyRepository.findLatePenaltiesByStudyMemberAndIsSettled(studyMember,false);
-            List<StudyAbsentPenalty> notSettledAbsentPenalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMemberAndIsSettled(studyMember, false);
+            List<StudyLatePenalty> notSettledLatePenalties = studyPenaltyRepository.findLatePenaltiesByStudyMemberAndIsSettledAndIsExempted(studyMember,false,false);
+            List<StudyAbsentPenalty> notSettledAbsentPenalties = studyPenaltyRepository.findAbsentPenaltiesByStudyMemberAndIsSettledAndIsExempted(studyMember, false,false);
             int penaltySum=0;
             // 각 penalty정보에 대하여 해당 멤버의 정산되지 않은 누적 벌금을 구한다.
             for(int j=0; j<notSettledLatePenalties.size(); j++){
-                StudyLatePenalty notSettledPenalty = notSettledLatePenalties.get(i);
+                StudyLatePenalty notSettledPenalty = notSettledLatePenalties.get(j);
                 penaltySum += notSettledPenalty.getFine();
             }
             for(int j=0; j<notSettledAbsentPenalties.size(); j++){
-                StudyAbsentPenalty notSettledPenalty = notSettledAbsentPenalties.get(i);
+                StudyAbsentPenalty notSettledPenalty = notSettledAbsentPenalties.get(j);
                 penaltySum += notSettledPenalty.getFine();
             }
             // 정산되지 않은 금액이 0이 아닐경우에만 dto리스트에 추가한다.
@@ -153,7 +154,7 @@ public class StudyPenaltyService {
         List<LocalDate> notSettledDays = new ArrayList<>();
 
         for(LocalDate start = studyGroup.getStartDate(); start.isBefore(LocalDate.now()) || start.equals(LocalDate.now()); start = start.plusDays(1)){
-            if(!(studyPenaltyRepository.findAllByStudyGroupAndDate(studyGroup,start).isEmpty()))
+            if(!(studyPenaltyRepository.findAllByStudyGroupAndDateAndIsSettledAndIsExempted(studyGroup,start,false,false).isEmpty()))
                 notSettledDays.add(start);
         }
         return StudyGroupNotSettledDayDto.builder()
@@ -167,8 +168,8 @@ public class StudyPenaltyService {
         List<StudyGroupAbsentMemberInfoDto> absentMembers = new ArrayList<>();
 
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
-        List<StudyLatePenalty> studyLatePenalties = studyPenaltyRepository.findAllLatePenaltyByStudyGroupAndDate(studyGroup, date);
-        List<StudyAbsentPenalty> studyAbsentPenalties = studyPenaltyRepository.findAllAbsentPenaltyByStudyGroupAndDate(studyGroup, date);
+        List<StudyLatePenalty> studyLatePenalties = studyPenaltyRepository.findAllLatePenaltyByStudyGroupAndDateAndIsExempted(studyGroup, date,false);
+        List<StudyAbsentPenalty> studyAbsentPenalties = studyPenaltyRepository.findAllAbsentPenaltyByStudyGroupAndDateAndIsExempted(studyGroup, date,false);
 
         for(int i=0; i<studyLatePenalties.size(); i++){
             StudyLatePenalty studyLatePenalty = studyLatePenalties.get(i);
@@ -208,5 +209,53 @@ public class StudyPenaltyService {
         studyPenalty.changeToSettled();
         studyMember.plusTotalPenalty(studyPenalty.getFine());
         studyGroup.plusTotalCost(studyPenalty.getFine());
+    }
+
+    public StudyGroupPenaltyInfoByDateResDto getPenaltyInfoByBetweenDate(Long groupId, LocalDate start, LocalDate finish) {
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        List<StudyGroupAbsentMemberInfoDto> absentMembers = new ArrayList<>();
+        List<StudyGroupLateMemberInfoDto> lateMembers =  new ArrayList<>();
+
+            List<StudyAbsentPenalty> absentPenalties = studyPenaltyRepository.findAllAbsentPenaltiesByStudyGroupAndDateBetweenAndIsSettledAndIsExempted(studyGroup, start, finish, false,false);
+            List<StudyLatePenalty> latePenalties = studyPenaltyRepository.findAllLatePenaltiesByStudyGroupAndDateBetweenAndIsSettledAndIsExempted(studyGroup, start, finish, false, false);
+
+            for(int i=0; i<absentPenalties.size(); i++){
+
+                StudyAbsentPenalty studyAbsentPenalty = absentPenalties.get(i);
+                absentMembers.add(StudyGroupAbsentMemberInfoDto.builder()
+                        .penaltyId(studyAbsentPenalty.getId())
+                        .isSettled(false)
+                        .name(studyAbsentPenalty.getStudyMember().getUser().getNickname())
+                        .build());
+            }
+            for(int i=0; i<latePenalties.size(); i++){
+
+                StudyLatePenalty studyLatePenalty = latePenalties.get(i);
+                lateMembers.add(StudyGroupLateMemberInfoDto.builder()
+                        .penaltyId(studyLatePenalty.getId())
+                        .isSettled(false)
+                        .name(studyLatePenalty.getStudyMember().getUser().getNickname())
+                        .build());
+            }
+
+        return StudyGroupPenaltyInfoByDateResDto.builder()
+                .absentCost(studyGroup.getAbsentCost())
+                .lateCost(studyGroup.getLateCost())
+                .lateMembers(lateMembers)
+                .absentMembers(absentMembers)
+                .build();
+    }
+
+    public void settleStudyGroupPenalties(StudyPenaltySettleReqDto studyPenaltySettleReqDto) {
+        List<Long> penalties = studyPenaltySettleReqDto.getPenalties();
+        for(int i = 0; i<penalties.size(); i++){
+            Long penaltyId = penalties.get(i);
+            settleStudyGroupPenalty(penaltyId);
+        }
+    }
+    public void exemptStudyGroupPenalty(Long penaltyId) {
+        StudyPenalty studyPenalty = studyPenaltyRepository.findById(penaltyId).get();
+        studyPenalty.changeToExempted();
     }
 }

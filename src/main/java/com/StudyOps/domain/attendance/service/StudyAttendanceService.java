@@ -75,6 +75,7 @@ public class StudyAttendanceService {
                     .studyGroup(studyGroup)
                     .fine(studyGroup.getLateCost())
                     .isSettled(false)
+                    .isExempted(false)
                     .lateTime(timeDifference)
                     .date(LocalDate.now())
                     .build();
