@@ -97,6 +97,11 @@ public class StudyAttendanceService {
         User user = userRepository.findById(userId).get();
         StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
 
+        if(studyGroup.getStartDate().isAfter(LocalDate.now()))
+            return StudyScheduleAndAttendanceResDto.builder()
+                    .isStudyDay(false)
+                    .build();
+
         LocalDateTime currentTime = LocalDateTime.now();
         String currentDayWeek = currentTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
         Optional<StudySchedule> studySchedule = studyScheduleRepository.findByStudyGroupAndDayWeek(studyGroup, currentDayWeek);
@@ -104,6 +109,7 @@ public class StudyAttendanceService {
             return StudyScheduleAndAttendanceResDto.builder()
                     .isStudyDay(false)
                     .build();
+
         Optional<StudyAttendance> studyAttendance = studyAttendanceRepository.findByStudyMemberAndDate(studyMember, LocalDate.now());
         if (studyAttendance.isEmpty())
             return StudyScheduleAndAttendanceResDto.builder()
@@ -112,6 +118,7 @@ public class StudyAttendanceService {
                     .finishTime(studySchedule.get().getFinishTime())
                     .isAttendant(false)
                     .build();
+
         return StudyScheduleAndAttendanceResDto.builder()
                 .isStudyDay(true)
                 .isAttendant(true)
