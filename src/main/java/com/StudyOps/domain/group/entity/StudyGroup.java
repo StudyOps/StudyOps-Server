@@ -20,6 +20,8 @@ public class StudyGroup {
     private Long id;
     private String name;
     private String intro;
+
+    @Column(length = 50000)
     private String rule;
     private int absentCost;
     private int lateCost;
