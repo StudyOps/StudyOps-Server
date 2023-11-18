@@ -6,6 +6,8 @@ import com.StudyOps.domain.penalty.entity.StudyPenalty;
 import com.StudyOps.domain.penalty.entity.StudyAbsentPenalty;
 import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -24,4 +26,8 @@ public interface StudyPenaltyRepository extends JpaRepository<StudyPenalty, Long
     Optional<StudyPenalty> findByStudyMemberAndDate(StudyMember studyMember, LocalDate date);
     List<StudyAbsentPenalty> findAllAbsentPenaltiesByStudyGroupAndDateBetweenAndIsSettledAndIsExempted(StudyGroup studyGroup, LocalDate start, LocalDate finish, Boolean isSettled, Boolean isExempted);
     List<StudyLatePenalty> findAllLatePenaltiesByStudyGroupAndDateBetweenAndIsSettledAndIsExempted(StudyGroup studyGroup, LocalDate start, LocalDate finish, Boolean isSettled, Boolean isExempted);
+    @Query("SELECT COUNT(p) FROM StudyPenalty p WHERE TYPE(p) = StudyLatePenalty And p.studyMember =:studyMember")
+    long countLatePenalties(@Param("studyMember") StudyMember studyMember);
+    @Query("SELECT COUNT(p) FROM StudyPenalty p WHERE TYPE(p) = StudyAbsentPenalty And p.studyMember =:studyMember")
+    long countAbsentPenalties(@Param("studyMember") StudyMember studyMember);
 }

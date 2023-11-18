@@ -1,9 +1,6 @@
 package com.StudyOps.domain.penalty.controller;
 
-import com.StudyOps.domain.penalty.dto.StudyGroupNotSettledDayDto;
-import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoByDateResDto;
-import com.StudyOps.domain.penalty.dto.StudyGroupPenaltyInfoResDto;
-import com.StudyOps.domain.penalty.dto.StudyPenaltySettleReqDto;
+import com.StudyOps.domain.penalty.dto.*;
 import com.StudyOps.domain.penalty.service.StudyPenaltyService;
 import com.StudyOps.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +56,7 @@ public class StudyPenaltyController {
     @GetMapping("/penalty/{groupId}/between")
     public ResponseEntity<ApiResponse<Object>> getPenaltyInfoByBetweenDate(@PathVariable(value = "groupId") Long groupId, @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start, @RequestParam("finish") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finish) {
 
-        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_INFO_BY_BETWEEN_DATE_GET_SUCCESS, studyPenaltyService.getPenaltyInfoByBetweenDate(groupId,start,finish));
+        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_INFO_BY_BETWEEN_DATE_GET_SUCCESS, studyPenaltyService.getPenaltyInfoByBetweenDate(groupId, start, finish));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
@@ -73,6 +70,7 @@ public class StudyPenaltyController {
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
+
     @DeleteMapping("/penalty/{penaltyId}")
     public ResponseEntity<ApiResponse<Object>> cancelSettledStudyGroupPenalty(@PathVariable Long penaltyId) {
 
@@ -93,4 +91,11 @@ public class StudyPenaltyController {
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 
+    @GetMapping("/penalty/counts/{groupId}")
+    public ResponseEntity<ApiResponse<List<StudyGroupPenaltyCountsDto>>> getStudyPenaltyCounts(@PathVariable(value = "groupId") Long groupId) {
+
+        ApiResponse<List<StudyGroupPenaltyCountsDto>> successResponse = new ApiResponse<>(PENALTY_COUNTS_GET_SUCCESS, studyPenaltyService.getStudyPenaltyCounts(groupId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
 }

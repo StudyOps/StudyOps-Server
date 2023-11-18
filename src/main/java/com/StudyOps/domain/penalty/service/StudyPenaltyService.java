@@ -266,4 +266,22 @@ public class StudyPenaltyService {
         studyPenalty.getStudyGroup().minusTotalCost(fine);
         studyPenalty.getStudyMember().minusTotalPenalty(fine);
     }
+
+    public List<StudyGroupPenaltyCountsDto> getStudyPenaltyCounts(Long groupId) {
+
+        List<StudyGroupPenaltyCountsDto> studyGroupPenaltyCountsDtos = new ArrayList<>();
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        List<StudyMember> members = studyMemberRepository.findAllByStudyGroup(studyGroup);
+
+        for(int i =0; i<members.size(); i++){
+            StudyMember studyMember = members.get(i);
+            studyGroupPenaltyCountsDtos.add(StudyGroupPenaltyCountsDto.builder()
+                    .nickName(studyMember.getUser().getNickname())
+                    .absentCount(studyPenaltyRepository.countAbsentPenalties(studyMember))
+                    .lateCount(studyPenaltyRepository.countLatePenalties(studyMember))
+                    .build());
+        }
+        return studyGroupPenaltyCountsDtos;
+    }
 }

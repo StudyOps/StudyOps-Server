@@ -30,6 +30,7 @@ public enum ApiResponseStatus {
     PENALTY_SETTLED_CANCEL_SUCCESS(true, 200, "벌금 정산 취소에 성공하였습니다."),
     PENALTY_EXEMPT_SUCCESS(true,200,"벌금 면제에 성공하였습니다."),
     PENALTY_INFO_BY_BETWEEN_DATE_GET_SUCCESS(true, 200, "스터디 그룹 해당 날짜 범위 벌금 정산 정보 조회에 성공하였습니다."),
+    PENALTY_COUNTS_GET_SUCCESS(true, 200, "스터디 그룹 멤버별 벌금 횟수 조회에 성공하였습니다."),
     INVITED_MEMBER_STATUS_GET_SUCCESS(true, 200 , "스터디 그룹 초대멤버 응답 상태 조회에 성공하였습니다.");
     private final boolean isSuccess;
     private final int status;
