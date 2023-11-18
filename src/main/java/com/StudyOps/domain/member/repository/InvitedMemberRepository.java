@@ -14,4 +14,5 @@ import java.util.Optional;
 public interface InvitedMemberRepository extends JpaRepository<InvitedMember, Long> {
    List<InvitedMember> findAllByUser(User user);
    Optional<InvitedMember> findByStudyGroupAndUser(StudyGroup studyGroup, User user);
+   List<InvitedMember> findAllByStudyGroup(StudyGroup studyGroup);
 }

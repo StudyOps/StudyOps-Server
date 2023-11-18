@@ -3,6 +3,7 @@ package com.StudyOps.domain.member.service;
 import com.StudyOps.domain.group.dto.StudyGroupResDto;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
+import com.StudyOps.domain.member.dto.InvitedMemberStatus;
 import com.StudyOps.domain.member.entity.AcceptStatus;
 import com.StudyOps.domain.member.entity.InvitedMember;
 import com.StudyOps.domain.member.repository.InvitedMemberRepository;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,7 +102,23 @@ public class InvitedMemberService {
                 .collect(Collectors.toList());
 
         return resDtos;
+    }
 
+    public List<InvitedMemberStatus> getInvitedMemberStatus(Long groupId) {
+        List<InvitedMemberStatus> invitedMemberStatusList = new ArrayList<>();
+
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+
+        List<InvitedMember> members = invitedMemberRepository.findAllByStudyGroup(studyGroup);
+
+        for(int i=0; i<members.size(); i++){
+            InvitedMember invitedMember = members.get(i);
+            invitedMemberStatusList.add(InvitedMemberStatus.builder()
+                    .nickName(invitedMember.getUser().getNickname())
+                    .status(invitedMember.getAcceptStatus())
+                    .build());
+        }
+        return invitedMemberStatusList;
     }
 }
 

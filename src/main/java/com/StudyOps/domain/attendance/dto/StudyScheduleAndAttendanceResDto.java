@@ -18,7 +18,7 @@ public class StudyScheduleAndAttendanceResDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isAttendant;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean  isLate;
+    private Boolean isLate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer lateTime;
     @JsonInclude(JsonInclude.Include.NON_NULL)
