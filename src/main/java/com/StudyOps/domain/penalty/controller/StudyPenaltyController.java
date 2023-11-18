@@ -73,6 +73,15 @@ public class StudyPenaltyController {
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
+    @DeleteMapping("/penalty/{penaltyId}")
+    public ResponseEntity<ApiResponse<Object>> cancelSettledStudyGroupPenalty(@PathVariable Long penaltyId) {
+
+        studyPenaltyService.cancelSettledStudyGroupPenalty(penaltyId);
+
+        ApiResponse<Object> successResponse = new ApiResponse<>(PENALTY_SETTLED_CANCEL_SUCCESS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
 
     @PatchMapping("/penalty/exemption/{penaltyId}")
     public ResponseEntity<ApiResponse<Object>> exemptStudyGroupPenalties(@PathVariable Long penaltyId) {

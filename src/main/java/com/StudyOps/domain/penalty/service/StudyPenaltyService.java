@@ -258,4 +258,12 @@ public class StudyPenaltyService {
         StudyPenalty studyPenalty = studyPenaltyRepository.findById(penaltyId).get();
         studyPenalty.changeToExempted();
     }
+    public void cancelSettledStudyGroupPenalty(Long penaltyId) {
+        StudyPenalty studyPenalty = studyPenaltyRepository.findById(penaltyId).get();
+        studyPenalty.changeToNotSettled();
+
+        int fine = studyPenalty.getFine();
+        studyPenalty.getStudyGroup().minusTotalCost(fine);
+        studyPenalty.getStudyMember().minusTotalPenalty(fine);
+    }
 }

@@ -38,4 +38,5 @@ public abstract class StudyPenalty {
         this.isSettled = true;
     }
     public void changeToExempted(){this.isExempted = true; }
+    public void changeToNotSettled(){this.isSettled = false;}
 }

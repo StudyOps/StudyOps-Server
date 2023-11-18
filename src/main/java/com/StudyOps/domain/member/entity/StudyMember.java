@@ -34,4 +34,8 @@ public class StudyMember {
     public void plusTotalPenalty(int cost){
         this.totalPenalty += cost;
     }
+
+    public void minusTotalPenalty(int cost){
+        this.totalPenalty -= cost;
+    }
 }

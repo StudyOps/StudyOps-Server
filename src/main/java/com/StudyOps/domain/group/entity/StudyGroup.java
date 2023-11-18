@@ -51,4 +51,7 @@ public class StudyGroup {
     public void plusTotalCost(int cost){
         this.totalCost += cost;
     }
+    public void minusTotalCost(int cost){
+        this.totalCost -= cost;
+    }
 }
