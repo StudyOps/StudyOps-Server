@@ -9,4 +9,7 @@ import java.util.Optional;
 @Repository
 public interface EndUserRepository extends JpaRepository<EndUser, Long> {
     Optional<EndUser> findByNickname(String nickname);
+
+    Optional<EndUser> findByEmail(String email);
+    boolean existsByEmail(String email);
 }
