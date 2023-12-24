@@ -14,14 +14,13 @@ import com.StudyOps.domain.schedule.dto.StudyScheduleDto;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.schedule.service.StudyScheduleService;
-import com.StudyOps.domain.user.entity.User;
-import com.StudyOps.domain.user.repository.UserRepository;
+import com.StudyOps.domain.user.entity.EndUser;
+import com.StudyOps.domain.user.repository.EndUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 public class StudyGroupService {
     private final StudyScheduleRepository studyScheduleRepository;
     private final StudyGroupRepository studyGroupRepository;
-    private final UserRepository userRepository;
+    private final EndUserRepository endUserRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyMemberService studyMemberService;
     private final StudyScheduleService studyScheduleService;
@@ -44,14 +43,14 @@ public class StudyGroupService {
 
     public StudyGroupCreatedIdDto createStudyGroup(Long userId, StudyGroupReqDto studyGroupReqDto) {
         //userId로 유저를 찾는다. Optional로 조회되므로 .get()매서드를 사용해준다.
-        User user = userRepository.findById(userId).get();
+        EndUser endUser = endUserRepository.findById(userId).get();
 
         //studyGroupCreateReqDto를 엔티티로 변환 후 디비에 정보를 저장한다.
         StudyGroup studyGroup = studyGroupReqDto.toEntity();
         studyGroupRepository.save(studyGroup);
 
         //StudyMember 생성
-        studyMemberService.createStudyMember(user, studyGroup, true);
+        studyMemberService.createStudyMember(endUser, studyGroup, true);
 
         //StudySchedule 생성
         studyScheduleService.createStudySchedule(studyGroup, studyGroupReqDto.getSchedules());
@@ -75,12 +74,12 @@ public class StudyGroupService {
      ***********************************/
     public void quitStudyGroup(Long groupId, Long userId) {
 
-        User user = userRepository.findById(userId).get();
+        EndUser endUser = endUserRepository.findById(userId).get();
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
         studyGroup.decreaseHeadCount();
 
         //studyMember조회
-        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup,user).get();
+        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup, endUser).get();
 
         //출결 테이블에서 찾은 studyMember 삭제
         studyAttendanceService.deleteStudyMember(studyMember);
@@ -103,9 +102,9 @@ public class StudyGroupService {
      **/
     public List<StudyGroupResDto> getAllStudyGroups(Long userId) {
 
-        User user = userRepository.findById(userId).get();
+        EndUser endUser = endUserRepository.findById(userId).get();
 
-        List<StudyMember> studyMembers = studyMemberRepository.findAllByUser(user);
+        List<StudyMember> studyMembers = studyMemberRepository.findAllByEndUser(endUser);
         List<StudyGroupResDto> resDtos = studyMembers.stream()
                 .map(member -> {
                     StudyGroup studyGroup = member.getStudyGroup();
@@ -124,7 +123,7 @@ public class StudyGroupService {
                             .intro(studyGroup.getIntro())
                             .schedules(studyScheduleDtos)
                             .hostName(studyGroup.getHostName())
-                            .hostStatus(studyGroup.getHostName().equals(user.getNickname()))
+                            .hostStatus(studyGroup.getHostName().equals(endUser.getNickname()))
                             .headCount(studyGroup.getHeadCount())
                             .absenceCost(studyGroup.getAbsentCost())
                             .lateCost(studyGroup.getLateCost())
@@ -153,7 +152,7 @@ public class StudyGroupService {
             schedules.add(scheduleDto);
         }
         for(int i=0; i<memberList.size(); i++){
-            members.add(memberList.get(i).getUser().getNickname());
+            members.add(memberList.get(i).getEndUser().getNickname());
         }
         StudyGroupInfoResDto studyGroupInfoResDto = StudyGroupInfoResDto.builder()
                 .name(studyGroup.getName())

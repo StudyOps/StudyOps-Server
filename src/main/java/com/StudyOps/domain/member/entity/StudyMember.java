@@ -1,7 +1,7 @@
 package com.StudyOps.domain.member.entity;
 
 import com.StudyOps.domain.group.entity.StudyGroup;
-import com.StudyOps.domain.user.entity.User;
+import com.StudyOps.domain.user.entity.EndUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class StudyMember {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private EndUser endUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_group_id")

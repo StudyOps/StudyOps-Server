@@ -1,12 +1,12 @@
 package com.StudyOps.domain.user.repository;
 
-import com.StudyOps.domain.user.entity.User;
+import com.StudyOps.domain.user.entity.EndUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByNickname(String nickname);
+public interface EndUserRepository extends JpaRepository<EndUser, Long> {
+    Optional<EndUser> findByNickname(String nickname);
 }

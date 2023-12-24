@@ -1,7 +1,7 @@
 package com.StudyOps.global.common;
 
-import com.StudyOps.domain.user.entity.User;
-import com.StudyOps.domain.user.repository.UserRepository;
+import com.StudyOps.domain.user.entity.EndUser;
+import com.StudyOps.domain.user.repository.EndUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,24 +10,24 @@ import javax.annotation.PostConstruct;
 @Component
 @RequiredArgsConstructor
 public class init {
-    private final UserRepository userRepository;
+    private final EndUserRepository endUserRepository;
 
     //테스트 유저 먼저 생성
     @PostConstruct
     public void init() {
-        User user1 = new User();
-        User user2 = new User();
-        User user3 = new User();
-        User user4 = new User();
+        EndUser endUser1 = new EndUser();
+        EndUser endUser2 = new EndUser();
+        EndUser endUser3 = new EndUser();
+        EndUser endUser4 = new EndUser();
 
-        user1.setNickname("이찬희");
-        user2.setNickname("장희영");
-        user3.setNickname("소예원");
-        user4.setNickname("누구지");
+        endUser1.setNickname("이찬희");
+        endUser2.setNickname("장희영");
+        endUser3.setNickname("소예원");
+        endUser4.setNickname("누구지");
 
-        userRepository.save(user1);
-        userRepository.save(user2);
-        userRepository.save(user3);
-        userRepository.save(user4);
+        endUserRepository.save(endUser1);
+        endUserRepository.save(endUser2);
+        endUserRepository.save(endUser3);
+        endUserRepository.save(endUser4);
     }
 }

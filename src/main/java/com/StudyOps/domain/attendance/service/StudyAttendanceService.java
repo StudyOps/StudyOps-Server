@@ -14,8 +14,8 @@ import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
 import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
-import com.StudyOps.domain.user.entity.User;
-import com.StudyOps.domain.user.repository.UserRepository;
+import com.StudyOps.domain.user.entity.EndUser;
+import com.StudyOps.domain.user.repository.EndUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class StudyAttendanceService {
     private final StudyAttendanceVoteRepository studyAttendanceVoteRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final StudyPenaltyRepository studyPenaltyRepository;
-    private final UserRepository userRepository;
+    private final EndUserRepository endUserRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyScheduleRepository studyScheduleRepository;
 
@@ -50,8 +50,8 @@ public class StudyAttendanceService {
     public void attendStudyDate(Long groupId, Long userId) {
 
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
-        User user = userRepository.findById(userId).get();
-        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
+        EndUser endUser = endUserRepository.findById(userId).get();
+        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup, endUser).get();
 
         //지각 계산 로직
         LocalDateTime attendTime = LocalDateTime.now();
@@ -94,8 +94,8 @@ public class StudyAttendanceService {
     public StudyScheduleAndAttendanceResDto getStudyScheduleAndAttendance(Long groupId, Long userId) {
 
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
-        User user = userRepository.findById(userId).get();
-        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
+        EndUser endUser = endUserRepository.findById(userId).get();
+        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup, endUser).get();
 
         if(studyGroup.getStartDate().isAfter(LocalDate.now()))
             return StudyScheduleAndAttendanceResDto.builder()
@@ -144,27 +144,27 @@ public class StudyAttendanceService {
             for (int i = 0; i < members.size(); i++) {
                 Optional<StudyAttendance> studyAttendance = studyAttendanceRepository.findByStudyMemberAndDate(members.get(i), studyDate);
                 if (studyAttendance.isEmpty())
-                    absentMemberList.add(members.get(i).getUser().getNickname());
+                    absentMemberList.add(members.get(i).getEndUser().getNickname());
                 else {
-                    attendMemberList.add(members.get(i).getUser().getNickname());
+                    attendMemberList.add(members.get(i).getEndUser().getNickname());
                 }
             }
         } else {
             for (int i = 0; i < members.size(); i++) {
                 Optional<StudyAttendanceVote> studyAttendanceVote = studyAttendanceVoteRepository.findByStudyMemberAndDate(members.get(i), studyDate);
                 if (studyAttendanceVote.isEmpty())
-                    attendMemberList.add(members.get(i).getUser().getNickname());
+                    attendMemberList.add(members.get(i).getEndUser().getNickname());
                 else if (studyAttendanceVote.get().getAttendance())
-                    attendMemberList.add(members.get(i).getUser().getNickname());
+                    attendMemberList.add(members.get(i).getEndUser().getNickname());
                 else
-                    absentMemberList.add(members.get(i).getUser().getNickname());
+                    absentMemberList.add(members.get(i).getEndUser().getNickname());
             }
 
         }
         return StudyAttendanceAndAbsenceDto.builder()
                 .attendMemberList(attendMemberList)
                 .absenceMemberList(absentMemberList)
-                .isAttended(attendMemberList.contains(userRepository.findById(userId).get().getNickname()))
+                .isAttended(attendMemberList.contains(endUserRepository.findById(userId).get().getNickname()))
                 .build();
     }
 }

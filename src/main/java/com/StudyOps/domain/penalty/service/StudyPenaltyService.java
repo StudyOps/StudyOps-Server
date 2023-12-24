@@ -116,7 +116,7 @@ public class StudyPenaltyService {
 
             //조회한 스터디멤버 해당 dto리스트에 삽입한다.
             settledPenaltyDtos.add(StudyGroupMemberPenaltyDto.builder()
-                    .name(studyMember.getUser().getNickname())
+                    .name(studyMember.getEndUser().getNickname())
                     .penalty(studyMember.getTotalPenalty())
                     .build());
 
@@ -136,7 +136,7 @@ public class StudyPenaltyService {
             // 정산되지 않은 금액이 0이 아닐경우에만 dto리스트에 추가한다.
             if(penaltySum != 0)
                 notSettledPenaltyDtos.add(StudyGroupMemberPenaltyDto.builder()
-                    .name(studyMember.getUser().getNickname())
+                    .name(studyMember.getEndUser().getNickname())
                     .penalty(penaltySum)
                     .build());
         }
@@ -177,7 +177,7 @@ public class StudyPenaltyService {
 
             lateMembers.add(StudyGroupLateMemberInfoDto.builder()
                     .penaltyId(studyLatePenalty.getId())
-                    .name(studyMember.getUser().getNickname())
+                    .name(studyMember.getEndUser().getNickname())
                     .isSettled(studyLatePenalty.getIsSettled())
                     .lateTime(studyLatePenalty.getLateTime())
                     .build());
@@ -188,7 +188,7 @@ public class StudyPenaltyService {
 
             absentMembers.add(StudyGroupAbsentMemberInfoDto.builder()
                     .penaltyId(studyAbsentPenalty.getId())
-                    .name(studyMember.getUser().getNickname())
+                    .name(studyMember.getEndUser().getNickname())
                     .isSettled(studyAbsentPenalty.getIsSettled())
                     .build());
         }
@@ -226,7 +226,7 @@ public class StudyPenaltyService {
                 absentMembers.add(StudyGroupAbsentMemberInfoDto.builder()
                         .penaltyId(studyAbsentPenalty.getId())
                         .isSettled(false)
-                        .name(studyAbsentPenalty.getStudyMember().getUser().getNickname())
+                        .name(studyAbsentPenalty.getStudyMember().getEndUser().getNickname())
                         .build());
             }
             for(int i=0; i<latePenalties.size(); i++){
@@ -235,7 +235,7 @@ public class StudyPenaltyService {
                 lateMembers.add(StudyGroupLateMemberInfoDto.builder()
                         .penaltyId(studyLatePenalty.getId())
                         .isSettled(false)
-                        .name(studyLatePenalty.getStudyMember().getUser().getNickname())
+                        .name(studyLatePenalty.getStudyMember().getEndUser().getNickname())
                         .build());
             }
 
@@ -277,7 +277,7 @@ public class StudyPenaltyService {
         for(int i =0; i<members.size(); i++){
             StudyMember studyMember = members.get(i);
             studyGroupPenaltyCountsDtos.add(StudyGroupPenaltyCountsDto.builder()
-                    .nickName(studyMember.getUser().getNickname())
+                    .nickName(studyMember.getEndUser().getNickname())
                     .absentCount(studyPenaltyRepository.countAbsentPenalties(studyMember))
                     .lateCount(studyPenaltyRepository.countLatePenalties(studyMember))
                     .build());

@@ -6,8 +6,8 @@ import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
-import com.StudyOps.domain.user.entity.User;
-import com.StudyOps.domain.user.repository.UserRepository;
+import com.StudyOps.domain.user.entity.EndUser;
+import com.StudyOps.domain.user.repository.EndUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class StudyAttendanceVoteService {
     private final StudyAttendanceVoteRepository studyAttendanceVoteRepository;
     private final StudyGroupRepository studyGroupRepository;
-    private final UserRepository userRepository;
+    private final EndUserRepository endUserRepository;
     private final StudyMemberRepository studyMemberRepository;
     public void deleteStudyMember(StudyMember studyMember){
         List<StudyAttendanceVote> attendanceVotes = studyAttendanceVoteRepository.findAllByStudyMember(studyMember);
@@ -34,8 +34,8 @@ public class StudyAttendanceVoteService {
     }
     public void absentOrAttendStudyDate(Long groupId, Long userId, String date,Boolean attendance) {
         StudyGroup studyGroup =  studyGroupRepository.findById(groupId).get();
-        User user = userRepository.findById(userId).get();
-        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndUser(studyGroup, user).get();
+        EndUser endUser = endUserRepository.findById(userId).get();
+        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup, endUser).get();
         LocalDate absentDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
 
         Optional<StudyAttendanceVote> studyAttendanceVote =studyAttendanceVoteRepository.findByStudyMemberAndDate(studyMember,absentDate);
