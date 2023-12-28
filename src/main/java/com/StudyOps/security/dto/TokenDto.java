@@ -1,15 +1,16 @@
 package com.StudyOps.security.dto;
 
-import lombok.*;
+import com.StudyOps.security.entity.RefreshToken;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TokenDto {
-
-    private String grantType;
-    private String accessToken;
-    private String refreshToken;
-    private Long accessTokenExpiresIn;
+    private TokenResDto tokenResDto;
+    private RefreshToken refreshToken;
 }
