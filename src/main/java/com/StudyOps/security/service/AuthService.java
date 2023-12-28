@@ -5,7 +5,7 @@ import com.StudyOps.domain.user.dto.EndUserResponseDto;
 import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
 import com.StudyOps.security.dto.TokenDto;
-import com.StudyOps.security.dto.TokenRequestDto;
+import com.StudyOps.security.dto.TokenResDto;
 import com.StudyOps.security.entity.RefreshToken;
 import com.StudyOps.security.jwt.TokenProvider;
 import com.StudyOps.security.repository.RefreshTokenRepository;
@@ -16,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +40,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto login(EndUserRequestDto endUserRequestDto) {
+    public TokenResDto login(EndUserRequestDto endUserRequestDto, HttpServletResponse response) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = endUserRequestDto.toAuthentication();
 
@@ -48,45 +51,44 @@ public class AuthService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(tokenDto.getRefreshToken())
-                .build();
+        // 4.  Refresh Token 저장
+        refreshTokenRepository.save(tokenDto.getRefreshToken());
 
-        refreshTokenRepository.save(refreshToken);
+        // 5. Refresh Token 쿠키 생성
+        Cookie refreshTokenCookie = new Cookie("refreshToken", tokenDto.getRefreshToken().getValue());
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        refreshTokenCookie.setHttpOnly(true);  //httponly 옵션 설정
+        refreshTokenCookie.setSecure(true); //https 옵션 설정
+        refreshTokenCookie.setPath("/");
+        response.addCookie(refreshTokenCookie);
 
-        // 5. 토큰 발급
-        return tokenDto;
+        // 6. 토큰 발급
+        return tokenDto.getTokenResDto();
     }
 
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+    public TokenResDto reissue(String accessToken, String refreshTokenReq, HttpServletResponse response) {
         // 1. Refresh Token 검증
-        if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
+        if (!tokenProvider.validateToken(refreshTokenReq)) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+        Authentication authentication = tokenProvider.getAuthentication(accessToken);
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
+        if (!refreshToken.getValue().equals(refreshTokenReq)) {
             throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
-        // 5. 새로운 토큰 생성
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        // 6. 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-        refreshTokenRepository.save(newRefreshToken);
+        // 5. 새로운 Access 토큰 생성
+        TokenResDto tokenResDto = tokenProvider.generateNewAccessToken(authentication);
 
         // 토큰 발급
-        return tokenDto;
+        return tokenResDto;
     }
 }
