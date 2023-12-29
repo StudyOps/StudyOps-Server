@@ -13,11 +13,13 @@ public class EndUserRequestDto {
 
     private String email;
     private String password;
+    private String nickName;
 
     public EndUser toEndUser(PasswordEncoder passwordEncoder) {
         return EndUser.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
+                .nickname(nickName)
                 .authority(Authority.ROLE_USER)
                 .build();
     }

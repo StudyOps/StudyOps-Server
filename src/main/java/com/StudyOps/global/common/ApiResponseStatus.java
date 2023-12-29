@@ -31,7 +31,10 @@ public enum ApiResponseStatus {
     PENALTY_EXEMPT_SUCCESS(true,200,"벌금 면제에 성공하였습니다."),
     PENALTY_INFO_BY_BETWEEN_DATE_GET_SUCCESS(true, 200, "스터디 그룹 해당 날짜 범위 벌금 정산 정보 조회에 성공하였습니다."),
     PENALTY_COUNTS_GET_SUCCESS(true, 200, "스터디 그룹 멤버별 벌금 횟수 조회에 성공하였습니다."),
-    INVITED_MEMBER_STATUS_GET_SUCCESS(true, 200 , "스터디 그룹 초대멤버 응답 상태 조회에 성공하였습니다.");
+    INVITED_MEMBER_STATUS_GET_SUCCESS(true, 200 , "스터디 그룹 초대멤버 응답 상태 조회에 성공하였습니다."),
+    SIGN_UP_SUCCESS(true,200,"회원가입에 성공하였습니다."),
+    LOGIN_SUCCESS(true,200,"로그안에 성공하였습니다."),
+    ACCESS_TOKEN_REISSUE_SUCCESS(true,200, "엑세스 토큰 재발급에 성공하였습니다.");
     private final boolean isSuccess;
     private final int status;
     private final String message;
