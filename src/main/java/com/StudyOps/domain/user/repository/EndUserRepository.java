@@ -12,4 +12,5 @@ public interface EndUserRepository extends JpaRepository<EndUser, Long> {
 
     Optional<EndUser> findByEmail(String email);
     boolean existsByEmail(String email);
+    boolean existsByNickname(String nickName);
 }

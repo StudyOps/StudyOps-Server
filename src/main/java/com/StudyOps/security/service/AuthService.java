@@ -36,6 +36,9 @@ public class AuthService {
         if (endUserRepository.existsByEmail(endUserRequestDto.getEmail())) {
             throw new CustomRuntimeException("이미 가입되어 있는 유저입니다.", HttpStatus.CONFLICT);
         }
+        if(endUserRepository.existsByNickname(endUserRequestDto.getNickName())) {
+            throw new CustomRuntimeException("이미 사용중인 닉네임 입니다.", HttpStatus.CONFLICT);
+        }
 
         EndUser endUser = endUserRequestDto.toEndUser(passwordEncoder);
         return EndUserResponseDto.of(endUserRepository.save(endUser));
