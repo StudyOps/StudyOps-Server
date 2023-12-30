@@ -1,8 +1,10 @@
 package com.StudyOps.security.util;
 
+import com.StudyOps.global.common.exception.CustomRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -19,7 +21,7 @@ public class SecurityUtil {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null) {
-            throw  new RuntimeException("Security Context 에 인증 정보가 없습니다.");
+            throw  new CustomRuntimeException("Security Context 에 인증 정보가 없습니다.", HttpStatus.UNAUTHORIZED);
         }
 
         return Long.parseLong(authentication.getName());
