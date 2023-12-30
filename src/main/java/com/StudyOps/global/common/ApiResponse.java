@@ -3,13 +3,13 @@ package com.StudyOps.global.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonPropertyOrder({"isSuccess", "status", "message", "data"}) // 변수 순서를 지정
+@AllArgsConstructor
+@Builder
 public class ApiResponse<T> {
     private boolean isSuccess;
     private int status;

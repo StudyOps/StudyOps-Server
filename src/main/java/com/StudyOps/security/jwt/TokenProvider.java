@@ -3,12 +3,14 @@ package com.StudyOps.security.jwt;
 import com.StudyOps.security.dto.TokenDto;
 import com.StudyOps.security.dto.TokenResDto;
 import com.StudyOps.security.entity.RefreshToken;
+import com.StudyOps.global.common.exception.CustomRuntimeException;
 import com.StudyOps.security.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,8 +19,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,7 +109,7 @@ public class TokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new CustomRuntimeException("권한 정보가 없는 토큰입니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 클레임에서 권한 정보 가져오기
