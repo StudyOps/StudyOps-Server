@@ -1,13 +1,12 @@
 package com.StudyOps.global.common.exception;
 
 import com.StudyOps.global.common.ApiResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.io.ObjectOutput;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
@@ -31,5 +30,4 @@ public class CustomExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
-
 }

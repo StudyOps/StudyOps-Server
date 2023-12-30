@@ -57,12 +57,13 @@ public class AuthService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         String key = tokenDto.getRefreshToken().getKey();
+        Long id = Long.parseLong(key);
         String value = tokenDto.getRefreshToken().getValue();
         // 4.  Refresh Token 저장
         if(refreshTokenRepository.findByKey(key).isPresent())
-            tokenDto.getRefreshToken().updateValue(value);
-        else
-            refreshTokenRepository.save(tokenDto.getRefreshToken());
+            refreshTokenRepository.deleteById(id);
+
+        refreshTokenRepository.save(tokenDto.getRefreshToken());
 
         // 5. Refresh Token 쿠키 생성
         Cookie refreshTokenCookie = new Cookie("refreshToken", tokenDto.getRefreshToken().getValue());

@@ -36,7 +36,7 @@ public class StudyAttendanceController {
     }
 
     @GetMapping("/schedules/attendances/{groupId}")
-    public ResponseEntity<ApiResponse<StudyAttendanceAndAbsenceDto>> getStudyAttendanceByDate(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "userId") Long userId, @RequestParam String date) {
+    public ResponseEntity<ApiResponse<StudyAttendanceAndAbsenceDto>> getStudyAttendanceByDate(@PathVariable(value = "groupId") Long groupId, @RequestParam String date) {
 
 
         ApiResponse<StudyAttendanceAndAbsenceDto> successResponse = new ApiResponse<>(STUDY_ATTENDANCE_GET_BY_DATE_SUCCESS, studyAttendanceService.getStudyAttendanceByDate(groupId, SecurityUtil.getCurrentMemberId(), date));
