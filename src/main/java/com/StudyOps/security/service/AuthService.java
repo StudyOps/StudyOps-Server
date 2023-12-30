@@ -51,8 +51,13 @@ public class AuthService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
+        String key = tokenDto.getRefreshToken().getKey();
+        String value = tokenDto.getRefreshToken().getValue();
         // 4.  Refresh Token 저장
-        refreshTokenRepository.save(tokenDto.getRefreshToken());
+        if(refreshTokenRepository.findByKey(key).isPresent())
+            tokenDto.getRefreshToken().updateValue(value);
+        else
+            refreshTokenRepository.save(tokenDto.getRefreshToken());
 
         // 5. Refresh Token 쿠키 생성
         Cookie refreshTokenCookie = new Cookie("refreshToken", tokenDto.getRefreshToken().getValue());

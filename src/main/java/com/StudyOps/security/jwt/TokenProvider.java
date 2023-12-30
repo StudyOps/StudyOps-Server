@@ -104,6 +104,7 @@ public class TokenProvider {
                 .build();
     }
     public Authentication getAuthentication(String accessToken) {
+        accessToken = accessToken.replace("Bearer ", "").trim();
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
