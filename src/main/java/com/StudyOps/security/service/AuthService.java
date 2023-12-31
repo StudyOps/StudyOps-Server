@@ -34,7 +34,7 @@ public class AuthService {
     @Transactional
     public EndUserResponseDto signup(EndUserRequestDto endUserRequestDto) {
         if (endUserRepository.existsByEmail(endUserRequestDto.getEmail())) {
-            throw new CustomRuntimeException("이미 가입되어 있는 유저입니다.", HttpStatus.CONFLICT);
+            throw new CustomRuntimeException("이미 가입되어 있는 유저입니다.", HttpStatus.BAD_REQUEST);
         }
         if(endUserRepository.existsByNickname(endUserRequestDto.getNickName())) {
             throw new CustomRuntimeException("이미 사용중인 닉네임 입니다.", HttpStatus.CONFLICT);
@@ -56,22 +56,22 @@ public class AuthService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        String key = tokenDto.getRefreshToken().getKey();
-        Long id = Long.parseLong(key);
-        String value = tokenDto.getRefreshToken().getValue();
-        // 4.  Refresh Token 저장
-        if(refreshTokenRepository.findByKey(key).isPresent())
-            refreshTokenRepository.deleteById(id);
-
-        refreshTokenRepository.save(tokenDto.getRefreshToken());
-
-        // 5. Refresh Token 쿠키 생성
+        // 4. Refresh Token 쿠키 생성
         Cookie refreshTokenCookie = new Cookie("refreshToken", tokenDto.getRefreshToken().getValue());
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
         refreshTokenCookie.setHttpOnly(true);  //httponly 옵션 설정
         refreshTokenCookie.setSecure(true); //https 옵션 설정
         refreshTokenCookie.setPath("/");
         response.addCookie(refreshTokenCookie);
+
+
+        // 5.  Refresh Token 저장
+        String key = tokenDto.getRefreshToken().getKey();
+
+        if(refreshTokenRepository.findByKey(key).isPresent())
+            refreshTokenRepository.deleteByKey(key);
+
+        refreshTokenRepository.save(tokenDto.getRefreshToken());
 
         // 6. 토큰 발급
         return tokenDto.getTokenResDto();
