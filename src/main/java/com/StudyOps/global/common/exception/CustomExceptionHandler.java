@@ -25,9 +25,9 @@ public class CustomExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleBadCredentialsException(){
         ApiResponse<Object> response = ApiResponse.builder()
                 .isSuccess(false)
-                .status(401)
+                .status(400)
                 .message("아이디 혹은 패스워드가 틀렸습니다.")
                 .build();
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
