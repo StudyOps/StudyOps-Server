@@ -116,9 +116,10 @@ public class StudyPenaltyService {
 
             //조회한 스터디멤버 해당 dto리스트에 삽입한다.
             settledPenaltyDtos.add(StudyGroupMemberPenaltyDto.builder()
-                    .name(studyMember.getEndUser().getNickname())
-                    .penalty(studyMember.getTotalPenalty())
-                    .build());
+                            .nickName(studyMember.getEndUser().getNickname())
+                            .profileImageURl(studyMember.getEndUser().getProfileImageUrl())
+                            .penalty(studyMember.getTotalPenalty())
+                            .build());
 
             //스터디 멤버와 정산여부 필드 false값으로 studyPenalty조회한다.
             List<StudyLatePenalty> notSettledLatePenalties = studyPenaltyRepository.findLatePenaltiesByStudyMemberAndIsSettledAndIsExempted(studyMember,false,false);
@@ -136,9 +137,10 @@ public class StudyPenaltyService {
             // 정산되지 않은 금액이 0이 아닐경우에만 dto리스트에 추가한다.
             if(penaltySum != 0)
                 notSettledPenaltyDtos.add(StudyGroupMemberPenaltyDto.builder()
-                    .name(studyMember.getEndUser().getNickname())
-                    .penalty(penaltySum)
-                    .build());
+                        .nickName(studyMember.getEndUser().getNickname())
+                        .profileImageURl((studyMember.getEndUser().getProfileImageUrl()))
+                        .penalty(penaltySum)
+                        .build());
         }
 
         return StudyGroupPenaltyInfoResDto.builder()
@@ -177,7 +179,8 @@ public class StudyPenaltyService {
 
             lateMembers.add(StudyGroupLateMemberInfoDto.builder()
                     .penaltyId(studyLatePenalty.getId())
-                    .name(studyMember.getEndUser().getNickname())
+                    .nickName(studyMember.getEndUser().getNickname())
+                    .profileImageUrl(studyMember.getEndUser().getProfileImageUrl())
                     .isSettled(studyLatePenalty.getIsSettled())
                     .lateTime(studyLatePenalty.getLateTime())
                     .build());
@@ -188,7 +191,8 @@ public class StudyPenaltyService {
 
             absentMembers.add(StudyGroupAbsentMemberInfoDto.builder()
                     .penaltyId(studyAbsentPenalty.getId())
-                    .name(studyMember.getEndUser().getNickname())
+                    .nickName(studyMember.getEndUser().getNickname())
+                    .profileImageUrl(studyMember.getEndUser().getProfileImageUrl())
                     .isSettled(studyAbsentPenalty.getIsSettled())
                     .build());
         }
@@ -226,7 +230,8 @@ public class StudyPenaltyService {
                 absentMembers.add(StudyGroupAbsentMemberInfoDto.builder()
                         .penaltyId(studyAbsentPenalty.getId())
                         .isSettled(false)
-                        .name(studyAbsentPenalty.getStudyMember().getEndUser().getNickname())
+                        .nickName(studyAbsentPenalty.getStudyMember().getEndUser().getNickname())
+                        .profileImageUrl((studyAbsentPenalty.getStudyMember().getEndUser().getProfileImageUrl()))
                         .build());
             }
             for(int i=0; i<latePenalties.size(); i++){
@@ -235,7 +240,8 @@ public class StudyPenaltyService {
                 lateMembers.add(StudyGroupLateMemberInfoDto.builder()
                         .penaltyId(studyLatePenalty.getId())
                         .isSettled(false)
-                        .name(studyLatePenalty.getStudyMember().getEndUser().getNickname())
+                        .nickName(studyLatePenalty.getStudyMember().getEndUser().getNickname())
+                        .profileImageUrl(studyLatePenalty.getStudyMember().getEndUser().getProfileImageUrl())
                         .build());
             }
 

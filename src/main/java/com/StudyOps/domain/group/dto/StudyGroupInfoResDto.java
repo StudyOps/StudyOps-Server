@@ -15,6 +15,8 @@ public class StudyGroupInfoResDto {
     private String name;
     private String intro;
     private String hostName;
+    private String hostProfileImageUrl;
+    private boolean isHost;
     private List<String> members;
     private LocalDate startDate;
     private String rule;

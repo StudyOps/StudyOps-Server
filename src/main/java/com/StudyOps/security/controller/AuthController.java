@@ -1,10 +1,9 @@
 package com.StudyOps.security.controller;
 
+import com.StudyOps.domain.user.dto.EndUserEmailDto;
 import com.StudyOps.domain.user.dto.EndUserRequestDto;
-import com.StudyOps.domain.user.dto.EndUserResponseDto;
+import com.StudyOps.domain.user.dto.EndUserEmailAndImageDto;
 import com.StudyOps.global.common.ApiResponse;
-import com.StudyOps.global.common.ApiResponseStatus;
-import com.StudyOps.security.dto.TokenDto;
 import com.StudyOps.security.dto.TokenResDto;
 import com.StudyOps.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<ApiResponse<EndUserResponseDto>> signup(@RequestBody EndUserRequestDto memberRequestDto) {
-        ApiResponse<EndUserResponseDto> successResponse = new ApiResponse<>(SIGN_UP_SUCCESS,authService.signup(memberRequestDto));
+    public ResponseEntity<ApiResponse<EndUserEmailDto>> signup(@RequestBody EndUserRequestDto memberRequestDto) {
+        ApiResponse<EndUserEmailDto> successResponse = new ApiResponse<>(SIGN_UP_SUCCESS,authService.signup(memberRequestDto));
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 

@@ -8,5 +8,6 @@ import lombok.Getter;
 public class StudyGroupAbsentMemberInfoDto {
     private Long penaltyId;
     private Boolean isSettled;
-    private String name;
+    private String nickName;
+    private String profileImageUrl;
 }

@@ -53,7 +53,7 @@ public class StudyGroupController {
     @GetMapping("/info/{groupId}")
     public ResponseEntity<ApiResponse<StudyGroupInfoResDto>> getStudyGroupInfo(@PathVariable(value = "groupId") Long groupId) {
 
-        ApiResponse<StudyGroupInfoResDto> successResponse = new ApiResponse<>(STUDY_GROUP_INFO_GET_SUCCESS, studyGroupService.getStudyGroupInfo(groupId));
+        ApiResponse<StudyGroupInfoResDto> successResponse = new ApiResponse<>(STUDY_GROUP_INFO_GET_SUCCESS, studyGroupService.getStudyGroupInfo(groupId,SecurityUtil.getCurrentMemberId()));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

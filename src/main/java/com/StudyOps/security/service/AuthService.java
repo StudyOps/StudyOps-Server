@@ -1,7 +1,8 @@
 package com.StudyOps.security.service;
 
+import com.StudyOps.domain.user.dto.EndUserEmailDto;
 import com.StudyOps.domain.user.dto.EndUserRequestDto;
-import com.StudyOps.domain.user.dto.EndUserResponseDto;
+import com.StudyOps.domain.user.dto.EndUserEmailAndImageDto;
 import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
 import com.StudyOps.security.dto.TokenDto;
@@ -32,7 +33,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public EndUserResponseDto signup(EndUserRequestDto endUserRequestDto) {
+    public EndUserEmailDto signup(EndUserRequestDto endUserRequestDto) {
         if (endUserRepository.existsByEmail(endUserRequestDto.getEmail())) {
             throw new CustomRuntimeException("이미 가입되어 있는 유저입니다.", HttpStatus.BAD_REQUEST);
         }
@@ -41,7 +42,7 @@ public class AuthService {
         }
 
         EndUser endUser = endUserRequestDto.toEndUser(passwordEncoder);
-        return EndUserResponseDto.of(endUserRepository.save(endUser));
+        return EndUserEmailDto.of(endUserRepository.save(endUser));
     }
 
     @Transactional

@@ -2,7 +2,7 @@ package com.StudyOps.domain.member.controller;
 
 import com.StudyOps.domain.group.dto.StudyGroupResDto;
 import com.StudyOps.domain.member.dto.InvitedMemberReqDto;
-import com.StudyOps.domain.member.dto.InvitedMemberStatus;
+import com.StudyOps.domain.member.dto.InvitedMemberStatusDto;
 import com.StudyOps.domain.member.service.InvitedMemberService;
 import com.StudyOps.global.common.ApiResponse;
 import com.StudyOps.security.util.SecurityUtil;
@@ -61,9 +61,9 @@ public class InvitedMemberController {
     }
 
     @GetMapping("/asks/responses/{groupId}")
-    public ResponseEntity<ApiResponse<List<InvitedMemberStatus>>> getInvitedMemberStatus(@PathVariable(value = "groupId") Long groupId){
+    public ResponseEntity<ApiResponse<List<InvitedMemberStatusDto>>> getInvitedMemberStatus(@PathVariable(value = "groupId") Long groupId){
 
-        ApiResponse<List<InvitedMemberStatus>> successResponse = new ApiResponse<>(INVITED_MEMBER_STATUS_GET_SUCCESS,invitedMemberService.getInvitedMemberStatus(groupId));
+        ApiResponse<List<InvitedMemberStatusDto>> successResponse = new ApiResponse<>(INVITED_MEMBER_STATUS_GET_SUCCESS,invitedMemberService.getInvitedMemberStatus(groupId));
 
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }

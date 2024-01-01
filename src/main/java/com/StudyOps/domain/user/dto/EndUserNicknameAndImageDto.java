@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class EndUserResponseDto {
-    private String email;
+public class EndUserNicknameAndImageDto {
     private String nickName;
-    private String profileImageUrl;
+    private String profileImage;
 }

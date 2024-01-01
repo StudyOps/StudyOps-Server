@@ -1,5 +1,8 @@
 package com.StudyOps.domain.group.entity;
 
+import com.StudyOps.domain.member.entity.InvitedMember;
+import com.StudyOps.domain.member.entity.StudyMember;
+import com.StudyOps.domain.schedule.entity.StudySchedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,6 +35,14 @@ public class StudyGroup {
     private int headCount;
     private String hostName;
     private LocalDate startDate;
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.REMOVE)
+    private List<StudyMember> studyMembers;
+
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.REMOVE)
+    private List<InvitedMember> invitedMembers;
+
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.REMOVE)
+    private List<StudySchedule> studySchedules;
     public void decreaseHeadCount(){
         headCount--;
     }

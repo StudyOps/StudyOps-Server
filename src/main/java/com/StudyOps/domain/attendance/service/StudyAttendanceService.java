@@ -14,6 +14,7 @@ import com.StudyOps.domain.penalty.entity.StudyLatePenalty;
 import com.StudyOps.domain.penalty.repository.StudyPenaltyRepository;
 import com.StudyOps.domain.schedule.entity.StudySchedule;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
+import com.StudyOps.domain.user.dto.EndUserNicknameAndImageDto;
 import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -137,34 +138,53 @@ public class StudyAttendanceService {
         LocalDate today = LocalDate.now();
         LocalDate studyDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
 
-        List<String> absentMemberList = new ArrayList<>();
-        List<String> attendMemberList = new ArrayList<>();
+        List<EndUserNicknameAndImageDto> absentMemberList = new ArrayList<>();
+        List<EndUserNicknameAndImageDto> attendMemberList = new ArrayList<>();
 
         if (today.isAfter(studyDate)) {
             for (int i = 0; i < members.size(); i++) {
                 Optional<StudyAttendance> studyAttendance = studyAttendanceRepository.findByStudyMemberAndDate(members.get(i), studyDate);
                 if (studyAttendance.isEmpty())
-                    absentMemberList.add(members.get(i).getEndUser().getNickname());
+                    absentMemberList.add(EndUserNicknameAndImageDto.builder()
+                                    .nickName(members.get(i).getEndUser().getNickname())
+                                    .profileImage(members.get(i).getEndUser().getProfileImageUrl())
+                                    .build());
                 else {
-                    attendMemberList.add(members.get(i).getEndUser().getNickname());
+                    attendMemberList.add(EndUserNicknameAndImageDto.builder()
+                            .nickName(members.get(i).getEndUser().getNickname())
+                            .profileImage(members.get(i).getEndUser().getProfileImageUrl())
+                            .build());
                 }
             }
         } else {
             for (int i = 0; i < members.size(); i++) {
                 Optional<StudyAttendanceVote> studyAttendanceVote = studyAttendanceVoteRepository.findByStudyMemberAndDate(members.get(i), studyDate);
                 if (studyAttendanceVote.isEmpty())
-                    attendMemberList.add(members.get(i).getEndUser().getNickname());
+                    attendMemberList.add(EndUserNicknameAndImageDto.builder()
+                            .nickName(members.get(i).getEndUser().getNickname())
+                            .profileImage(members.get(i).getEndUser().getProfileImageUrl())
+                            .build());
                 else if (studyAttendanceVote.get().getAttendance())
-                    attendMemberList.add(members.get(i).getEndUser().getNickname());
+                    attendMemberList.add(EndUserNicknameAndImageDto.builder()
+                            .nickName(members.get(i).getEndUser().getNickname())
+                            .profileImage(members.get(i).getEndUser().getProfileImageUrl())
+                            .build());
                 else
-                    absentMemberList.add(members.get(i).getEndUser().getNickname());
+                    absentMemberList.add(EndUserNicknameAndImageDto.builder()
+                            .nickName(members.get(i).getEndUser().getNickname())
+                            .profileImage(members.get(i).getEndUser().getProfileImageUrl())
+                            .build());
             }
 
         }
         return StudyAttendanceAndAbsenceDto.builder()
                 .attendMemberList(attendMemberList)
                 .absenceMemberList(absentMemberList)
-                .isAttended(attendMemberList.contains(endUserRepository.findById(userId).get().getNickname()))
+                .isAttended(attendMemberList.stream()
+                        .anyMatch(member -> {
+                            Optional<EndUser> userOptional = endUserRepository.findById(userId);
+                            return userOptional.isPresent() && userOptional.get().getNickname().equals(member.getNickName());
+                        }))
                 .build();
     }
 }

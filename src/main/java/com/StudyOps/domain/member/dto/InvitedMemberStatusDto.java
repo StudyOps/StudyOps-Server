@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class InvitedMemberStatus {
+public class InvitedMemberStatusDto {
     private String nickName;
+    private String profileImageUrl;
     private AcceptStatus status;
 }

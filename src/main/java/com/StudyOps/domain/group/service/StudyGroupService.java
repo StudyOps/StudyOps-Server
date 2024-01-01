@@ -46,7 +46,8 @@ public class StudyGroupService {
         EndUser endUser = endUserRepository.findById(userId).get();
 
         //studyGroupCreateReqDto를 엔티티로 변환 후 디비에 정보를 저장한다.
-        StudyGroup studyGroup = studyGroupReqDto.toEntity();
+        String hostName = endUserRepository.findById(userId).get().getNickname();
+        StudyGroup studyGroup = studyGroupReqDto.toEntity(hostName);
         studyGroupRepository.save(studyGroup);
 
         //StudyMember 생성
@@ -93,6 +94,9 @@ public class StudyGroupService {
         //불참벌금 테이블에서 찾은 studyMember 삭제
         studyPenaltyService.deleteAbsentStudyMember(studyMember);
 
+        if(studyMember.getHostStatus().equals(true))
+            studyGroupRepository.delete(studyMember.getStudyGroup());
+        else
         //스터디 멤버 테이블에서 최종적으로 그 스터디멤버 삭제
         studyMemberRepository.delete(studyMember);
     }
@@ -136,8 +140,10 @@ public class StudyGroupService {
 
     }
 
-    public StudyGroupInfoResDto getStudyGroupInfo(Long groupId) {
+    public StudyGroupInfoResDto getStudyGroupInfo(Long groupId, Long userId) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        EndUser endUser = endUserRepository.findById(userId).get();
+        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup,endUser).get();
         List<StudyMember> memberList = studyMemberRepository.findAllByStudyGroup(studyGroup);
         List<String> members = new ArrayList<>();
 
@@ -159,6 +165,8 @@ public class StudyGroupService {
                 .intro(studyGroup.getIntro())
                 .rule(studyGroup.getRule())
                 .hostName(studyGroup.getHostName())
+                .hostProfileImageUrl(endUser.getProfileImageUrl())
+                .isHost(studyMember.getHostStatus())
                 .members(members)
                 .startDate(studyGroup.getStartDate())
                 .schedules(schedules)

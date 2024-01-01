@@ -24,11 +24,10 @@ public class StudyGroupReqDto {
     private int absenceCost;
     private int lateCost;
     private int allowedTime = 100000;
-    private String hostName;
     private List<StudyScheduleDto> schedules;
     private List<String> invitees;
 
-    public StudyGroup toEntity(){
+    public StudyGroup toEntity(String hostName){
         return StudyGroup.builder()
                 .name(name)
                 .intro(intro)

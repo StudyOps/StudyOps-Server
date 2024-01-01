@@ -1,6 +1,8 @@
 package com.StudyOps.domain.user.service;
 
+import com.StudyOps.domain.user.dto.EndUserEmailAndImageDto;
 import com.StudyOps.domain.user.dto.EndUserResponseDto;
+import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,16 +15,23 @@ import javax.transaction.Transactional;
 public class EndUserService {
     private final EndUserRepository endUserRepository;
 
-    public EndUserResponseDto findEndUserInfoById(Long endUserId) {
-        return endUserRepository.findById(endUserId)
-                .map(EndUserResponseDto::of)
-                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+    public EndUserEmailAndImageDto findEndUserInfoById(Long endUserId) {
+        EndUser endUser = endUserRepository.findById(endUserId).get();
+
+        return EndUserEmailAndImageDto.builder()
+                .email(endUser.getEmail())
+                .profileImageUrl(endUser.getProfileImageUrl())
+                .build();
     }
 
     public EndUserResponseDto findEndUserInfoByEmail(String email) {
-        return endUserRepository.findByEmail(email)
-                .map(EndUserResponseDto::of)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
+        EndUser endUser = endUserRepository.findByEmail(email).get();
+
+        return EndUserResponseDto.builder()
+                .email(endUser.getEmail())
+                .nickName(endUser.getNickname())
+                .profileImageUrl(endUser.getProfileImageUrl())
+                .build();
     }
 
 }

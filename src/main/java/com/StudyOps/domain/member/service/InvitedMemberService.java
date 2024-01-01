@@ -3,7 +3,7 @@ package com.StudyOps.domain.member.service;
 import com.StudyOps.domain.group.dto.StudyGroupResDto;
 import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
-import com.StudyOps.domain.member.dto.InvitedMemberStatus;
+import com.StudyOps.domain.member.dto.InvitedMemberStatusDto;
 import com.StudyOps.domain.member.entity.AcceptStatus;
 import com.StudyOps.domain.member.entity.InvitedMember;
 import com.StudyOps.domain.member.repository.InvitedMemberRepository;
@@ -104,8 +104,8 @@ public class InvitedMemberService {
         return resDtos;
     }
 
-    public List<InvitedMemberStatus> getInvitedMemberStatus(Long groupId) {
-        List<InvitedMemberStatus> invitedMemberStatusList = new ArrayList<>();
+    public List<InvitedMemberStatusDto> getInvitedMemberStatus(Long groupId) {
+        List<InvitedMemberStatusDto> invitedMemberStatusDtoList = new ArrayList<>();
 
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
 
@@ -113,12 +113,13 @@ public class InvitedMemberService {
 
         for(int i=0; i<members.size(); i++){
             InvitedMember invitedMember = members.get(i);
-            invitedMemberStatusList.add(InvitedMemberStatus.builder()
+            invitedMemberStatusDtoList.add(InvitedMemberStatusDto.builder()
                     .nickName(invitedMember.getEndUser().getNickname())
+                    .profileImageUrl(invitedMember.getEndUser().getProfileImageUrl())
                     .status(invitedMember.getAcceptStatus())
                     .build());
         }
-        return invitedMemberStatusList;
+        return invitedMemberStatusDtoList;
     }
 }
 

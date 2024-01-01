@@ -18,6 +18,7 @@ public class EndUser {
     private String email;
     private String nickname;
     private String password;
+    private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
