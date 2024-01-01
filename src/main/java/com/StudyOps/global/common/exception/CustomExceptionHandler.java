@@ -1,7 +1,6 @@
 package com.StudyOps.global.common.exception;
 
 import com.StudyOps.global.common.ApiResponse;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
