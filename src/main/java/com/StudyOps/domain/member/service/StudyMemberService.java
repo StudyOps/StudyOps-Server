@@ -23,7 +23,7 @@ public class StudyMemberService {
         StudyMember studyMember = StudyMember.builder()
                 .studyGroup(studyGroup)
                 .endUser(endUser)
-                .hostStatus(true)
+                .hostStatus(isHost)
                 .totalPenalty(0)
                 .joinDate(LocalDate.now())
                 .build();
