@@ -18,7 +18,7 @@ public class StudyGroupResDto {
     private String intro;
     private List<StudyScheduleDto> schedules;
     private String hostName;
-    private boolean hostStatus;
+    private boolean isHost;
     private int headCount;
     private int absenceCost;
     private int lateCost;
