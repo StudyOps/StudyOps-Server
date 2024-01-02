@@ -117,7 +117,7 @@ public class StudyPenaltyService {
             //조회한 스터디멤버 해당 dto리스트에 삽입한다.
             settledPenaltyDtos.add(StudyGroupMemberPenaltyDto.builder()
                             .nickName(studyMember.getEndUser().getNickname())
-                            .profileImageURl(studyMember.getEndUser().getProfileImageUrl())
+                            .profileImageUrl(studyMember.getEndUser().getProfileImageUrl())
                             .penalty(studyMember.getTotalPenalty())
                             .build());
 
@@ -138,7 +138,7 @@ public class StudyPenaltyService {
             if(penaltySum != 0)
                 notSettledPenaltyDtos.add(StudyGroupMemberPenaltyDto.builder()
                         .nickName(studyMember.getEndUser().getNickname())
-                        .profileImageURl((studyMember.getEndUser().getProfileImageUrl()))
+                        .profileImageUrl((studyMember.getEndUser().getProfileImageUrl()))
                         .penalty(penaltySum)
                         .build());
         }
