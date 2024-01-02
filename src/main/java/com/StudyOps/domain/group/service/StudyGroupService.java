@@ -127,7 +127,7 @@ public class StudyGroupService {
                             .intro(studyGroup.getIntro())
                             .schedules(studyScheduleDtos)
                             .hostName(studyGroup.getHostName())
-                            .hostStatus(studyGroup.getHostName().equals(endUser.getNickname()))
+                            .isHost(studyGroup.getHostName().equals(endUser.getNickname()))
                             .headCount(studyGroup.getHeadCount())
                             .absenceCost(studyGroup.getAbsentCost())
                             .lateCost(studyGroup.getLateCost())
