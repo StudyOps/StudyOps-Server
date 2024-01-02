@@ -9,6 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class StudyGroupMemberPenaltyDto {
     private String nickName;
-    private String profileImageURl;
+    private String profileImageUrl;
     private int penalty;
 }
