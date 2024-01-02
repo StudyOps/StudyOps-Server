@@ -14,4 +14,5 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     Optional<StudyMember> findByStudyGroupAndEndUser(StudyGroup studyGroup, EndUser endUser);
     List<StudyMember> findAllByEndUser(EndUser endUser);
     List<StudyMember> findAllByStudyGroup(StudyGroup studyGroup);
+    List<StudyMember> findAllByEndUserAndHostStatus(EndUser endUser, Boolean hostStatus);
 }

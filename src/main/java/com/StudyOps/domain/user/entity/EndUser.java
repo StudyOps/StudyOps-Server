@@ -1,5 +1,6 @@
 package com.StudyOps.domain.user.entity;
 
+import com.StudyOps.domain.user.dto.EndUserInfoReqDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,5 +22,13 @@ public class EndUser {
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+    public void changePassword(String newPassword){
+        this.password = newPassword;
+    }
+    public String changeEndUserInfo(EndUserInfoReqDto endUserInfoReqDto){
+        this.nickname = endUserInfoReqDto.getNickName();
+        return this.getNickname();
+    }
 
 }

@@ -66,4 +66,7 @@ public class StudyGroup {
     public void minusTotalCost(int cost){
         this.totalCost -= cost;
     }
+    public void changeHostName(String newNickname){
+        this.hostName = newNickname;
+    }
 }
