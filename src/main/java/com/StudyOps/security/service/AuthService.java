@@ -149,13 +149,13 @@ public class AuthService {
             return independentLogin(EndUserRequestDto.builder()
                     .email(findUser.getEmail())
                     .nickName(findUser.getNickname())
-                    .password(findUser.getPassword())
+                    .password(password)
                     .build(),res);
         }
         return independentLogin(EndUserRequestDto.builder()
                 .email(user.getEmail())
                 .nickName(user.getNickname())
-                .password(user.getPassword())
+                .password(password)
                 .build(),res);
     }
     private KakaoUserInfo extractKakaoUserInfo(String responseBody){
