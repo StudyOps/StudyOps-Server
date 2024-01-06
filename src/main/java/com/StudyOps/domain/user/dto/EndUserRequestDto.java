@@ -21,6 +21,7 @@ public class EndUserRequestDto {
                 .password(passwordEncoder.encode(password))
                 .nickname(nickName)
                 .authority(Authority.ROLE_USER)
+                .socialType("NO")
                 .build();
     }
 

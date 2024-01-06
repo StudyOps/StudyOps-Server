@@ -2,23 +2,28 @@ package com.StudyOps.security.service;
 
 import com.StudyOps.domain.user.dto.EndUserEmailDto;
 import com.StudyOps.domain.user.dto.EndUserRequestDto;
-import com.StudyOps.domain.user.dto.EndUserEmailAndImageDto;
 import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
+import com.StudyOps.security.dto.AuthorizationCodeDto;
 import com.StudyOps.security.dto.TokenDto;
 import com.StudyOps.security.dto.TokenResDto;
 import com.StudyOps.security.entity.RefreshToken;
 import com.StudyOps.global.common.exception.CustomRuntimeException;
 import com.StudyOps.security.jwt.TokenProvider;
 import com.StudyOps.security.repository.RefreshTokenRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +51,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResDto login(EndUserRequestDto endUserRequestDto, HttpServletResponse response) {
+    public TokenResDto independentLogin(EndUserRequestDto endUserRequestDto, HttpServletResponse response) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = endUserRequestDto.toAuthentication();
 
@@ -102,5 +107,48 @@ public class AuthService {
 
         // 토큰 발급
         return tokenResDto;
+    }
+    @Transactional
+    public String socialLogin(AuthorizationCodeDto authorizationCodeDto) {
+        String authorizationCode = authorizationCodeDto.getAuthorizationCode();
+        String accessToken = getAccessToken(authorizationCode);
+
+        return accessToken;
+
+    }
+    private String getAccessToken(String authorizationCode){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id","177781a8cf213cdbe722ea4fa86540ff");
+        params.add("redirect_uri", "http://localhost:3000/auth");
+        params.add("code", authorizationCode);
+
+        RestTemplate rt = new RestTemplate();
+        HttpEntity <MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> response = rt.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod. POST,
+                kakaoTokenRequest, String. class
+        );
+        return extractAccessToken(response.getBody());
+    }
+    private String extractAccessToken(String responseBody) {
+        try {
+            // JSON 파싱을 위한 ObjectMapper 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // ResponseEntity의 바디에서 JSON 노드 가져오기
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            // "access_token" 필드 값 가져오기
+            return jsonNode.get("access_token").asText();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

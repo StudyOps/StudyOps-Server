@@ -23,6 +23,8 @@ import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.StudyOps.domain.user.entity.Authority.ROLE_USER;
+
 @Slf4j
 @Component
 public class TokenProvider {

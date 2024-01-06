@@ -2,8 +2,8 @@ package com.StudyOps.security.controller;
 
 import com.StudyOps.domain.user.dto.EndUserEmailDto;
 import com.StudyOps.domain.user.dto.EndUserRequestDto;
-import com.StudyOps.domain.user.dto.EndUserEmailAndImageDto;
 import com.StudyOps.global.common.ApiResponse;
+import com.StudyOps.security.dto.AuthorizationCodeDto;
 import com.StudyOps.security.dto.TokenResDto;
 import com.StudyOps.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<ApiResponse<TokenResDto>> login(@RequestBody EndUserRequestDto memberRequestDto, HttpServletResponse response) {
-        ApiResponse<TokenResDto> successResponse = new ApiResponse<>(LOGIN_SUCCESS,authService.login(memberRequestDto,response));
+    public ResponseEntity<ApiResponse<TokenResDto>> independentLogin(@RequestBody EndUserRequestDto memberRequestDto, HttpServletResponse response) {
+        ApiResponse<TokenResDto> successResponse = new ApiResponse<>(LOGIN_SUCCESS,authService.independentLogin(memberRequestDto,response));
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 
@@ -36,5 +36,9 @@ public class AuthController {
     public ResponseEntity<ApiResponse<TokenResDto>> reissue(@RequestHeader("Authorization") String accessToken, @CookieValue(value = "refreshToken") String refreshTokenReq, HttpServletResponse response) {
         ApiResponse<TokenResDto> successResponse = new ApiResponse<>(ACCESS_TOKEN_REISSUE_SUCCESS,authService.reissue(accessToken,refreshTokenReq,response));
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+    @PostMapping("/auth/login/social")
+    public ResponseEntity<String> socialLogin(@RequestBody AuthorizationCodeDto authorizationCodeDto){
+        return ResponseEntity.ok().body(authService.socialLogin(authorizationCodeDto));
     }
 }
