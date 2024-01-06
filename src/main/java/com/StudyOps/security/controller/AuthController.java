@@ -40,6 +40,6 @@ public class AuthController {
     @PostMapping("/auth/login/social")
     public ResponseEntity<ApiResponse<TokenResDto>> socialLogin(@RequestBody AuthorizationCodeDto authorizationCodeDto, HttpServletResponse response){
         ApiResponse<TokenResDto> successResponse = new ApiResponse<>(LOGIN_SUCCESS,authService.socialLogin(authorizationCodeDto,response));
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 }
