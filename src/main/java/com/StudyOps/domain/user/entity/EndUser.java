@@ -30,5 +30,8 @@ public class EndUser {
         this.nickname = endUserInfoReqDto.getNickName();
         return this.getNickname();
     }
+    public void changeNickName(String newNickName){
+        this.nickname =newNickName;
+    }
 
 }

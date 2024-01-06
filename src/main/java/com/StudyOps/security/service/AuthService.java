@@ -132,7 +132,7 @@ public class AuthService {
         Long kakaoId = kakaoUserInfo.getId();
         String email = kakaoUserInfo.getEmail();
 
-        String userName = kakaoId + ".kakao";
+        String userName = email + ".kakao";
         String password = kakaoId.toString();
 
         EndUser user = endUserRepository.findByEmail(userName).orElse(null);
@@ -144,6 +144,8 @@ public class AuthService {
                     .password(password)
                     .build().toEndUser(passwordEncoder);
             endUserRepository.save(user);
+            user = endUserRepository.findByEmail(userName).get();
+            user.changeNickName("user" + user.getId().toString());
         }
         return independentLogin(EndUserRequestDto.builder()
                     .email(user.getEmail())
