@@ -7,6 +7,7 @@ import com.StudyOps.domain.user.repository.EndUserRepository;
 import com.StudyOps.security.dto.AuthorizationCodeDto;
 import com.StudyOps.security.dto.TokenDto;
 import com.StudyOps.security.dto.TokenResDto;
+import com.StudyOps.security.entity.KakaoUserInfo;
 import com.StudyOps.security.entity.RefreshToken;
 import com.StudyOps.global.common.exception.CustomRuntimeException;
 import com.StudyOps.security.jwt.TokenProvider;
@@ -109,11 +110,62 @@ public class AuthService {
         return tokenResDto;
     }
     @Transactional
-    public String socialLogin(AuthorizationCodeDto authorizationCodeDto) {
+    public TokenResDto socialLogin(AuthorizationCodeDto authorizationCodeDto,HttpServletResponse res) {
         String authorizationCode = authorizationCodeDto.getAuthorizationCode();
         String accessToken = getAccessToken(authorizationCode);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
 
-        return accessToken;
+        RestTemplate rt = new RestTemplate();
+        HttpEntity <MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = rt. exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                 HttpMethod. POST,
+                kakaoProfileRequest,
+                String. class
+                );
+
+        KakaoUserInfo kakaoUserInfo = extractKakaoUserInfo(response.getBody());
+
+        Long kakaoId = kakaoUserInfo.getId();
+        String email = kakaoUserInfo.getEmail();
+
+        String userName = kakaoId + ".kakao";
+        String password = kakaoId.toString();
+
+        EndUser user = endUserRepository.findByEmail(userName).orElse(null);
+
+        if(user == null){
+            user = EndUserRequestDto.builder()
+                    .nickName(userName)
+                    .email(userName)
+                    .password(password)
+                    .build().toEndUser(passwordEncoder);
+            endUserRepository.save(user);
+        }
+        return independentLogin(EndUserRequestDto.builder()
+                    .email(user.getEmail())
+                    .nickName(user.getNickname())
+                    .password(user.getPassword())
+                    .build(),res);
+    }
+    private KakaoUserInfo extractKakaoUserInfo(String responseBody){
+        try {
+            // JSON 파싱을 위한 ObjectMapper 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // ResponseEntity의 바디에서 JSON 노드 가져오기
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            Long id = jsonNode.get("id").asLong();
+            String email = jsonNode.get("kakao_account").asText();
+            return KakaoUserInfo.builder().id(id).email(email).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
     private String getAccessToken(String authorizationCode){

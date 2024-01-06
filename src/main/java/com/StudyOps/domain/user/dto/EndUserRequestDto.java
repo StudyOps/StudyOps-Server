@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class EndUserRequestDto {
 
     private String email;
@@ -21,7 +22,6 @@ public class EndUserRequestDto {
                 .password(passwordEncoder.encode(password))
                 .nickname(nickName)
                 .authority(Authority.ROLE_USER)
-                .socialType("NO")
                 .build();
     }
 

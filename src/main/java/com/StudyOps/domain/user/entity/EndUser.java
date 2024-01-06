@@ -22,7 +22,6 @@ public class EndUser {
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private Authority authority;
-    private String socialType = "NO";
 
     public void changePassword(String newPassword){
         this.password = newPassword;
