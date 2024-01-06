@@ -167,7 +167,7 @@ public class AuthService {
             JsonNode jsonNode = objectMapper.readTree(responseBody);
 
             Long id = jsonNode.get("id").asLong();
-            String email = jsonNode.get("kakao_account").asText();
+            String email = jsonNode.get("kakao_account.email").asText();
             return KakaoUserInfo.builder().id(id).email(email).build();
         } catch (Exception e) {
             e.printStackTrace();
