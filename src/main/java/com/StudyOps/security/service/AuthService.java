@@ -138,20 +138,25 @@ public class AuthService {
         EndUser user = endUserRepository.findByEmail(userName).orElse(null);
 
         if(user == null){
-            user = EndUserRequestDto.builder()
+            EndUser saveUser = EndUserRequestDto.builder()
                     .nickName(userName)
                     .email(userName)
                     .password(password)
                     .build().toEndUser(passwordEncoder);
-            endUserRepository.save(user);
-            user = endUserRepository.findByEmail(userName).get();
-            user.changeNickName("user" + user.getId().toString());
+            endUserRepository.save(saveUser);
+            EndUser findUser = endUserRepository.findByEmail(userName).get();
+            findUser.changeNickName("user" + saveUser.getId().toString());
+            return independentLogin(EndUserRequestDto.builder()
+                    .email(findUser.getEmail())
+                    .nickName(findUser.getNickname())
+                    .password(findUser.getPassword())
+                    .build(),res);
         }
         return independentLogin(EndUserRequestDto.builder()
-                    .email(user.getEmail())
-                    .nickName(user.getNickname())
-                    .password(user.getPassword())
-                    .build(),res);
+                .email(user.getEmail())
+                .nickName(user.getNickname())
+                .password(user.getPassword())
+                .build(),res);
     }
     private KakaoUserInfo extractKakaoUserInfo(String responseBody){
         try {
