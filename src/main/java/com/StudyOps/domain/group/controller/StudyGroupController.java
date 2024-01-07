@@ -15,6 +15,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class StudyGroupController {
 
     private final StudyGroupService studyGroupService;

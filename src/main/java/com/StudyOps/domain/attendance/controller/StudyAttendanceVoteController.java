@@ -13,6 +13,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.STUDY_DATE_ABSENT_SUC
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class StudyAttendanceVoteController {
     private final StudyAttendanceVoteService studyAttendanceVoteService;
 

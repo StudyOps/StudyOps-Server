@@ -16,6 +16,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class StudyPenaltyController {
     private final StudyPenaltyService studyPenaltyService;
 

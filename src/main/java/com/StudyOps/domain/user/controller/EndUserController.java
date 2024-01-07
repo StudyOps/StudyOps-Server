@@ -15,7 +15,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class EndUserController {
     private final EndUserService endUserService;
 

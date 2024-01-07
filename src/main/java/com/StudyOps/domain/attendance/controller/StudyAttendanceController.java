@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.StudyOps.global.common.ApiResponseStatus.*;
 
-@RestController
+@RestController()
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class StudyAttendanceController {
     private final StudyAttendanceService studyAttendanceService;
 

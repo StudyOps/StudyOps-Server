@@ -19,6 +19,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class InvitedMemberController {
     private final InvitedMemberService invitedMemberService;
 

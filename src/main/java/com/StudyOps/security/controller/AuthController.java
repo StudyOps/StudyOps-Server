@@ -17,6 +17,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class AuthController {
     private final AuthService authService;
 
