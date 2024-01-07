@@ -41,7 +41,7 @@ public class StudyPenaltyService {
         3. 해당 스터디 그룹 스터디 멤버 전체 조회
         4. 멤버별로 오늘 해당 되는 날짜 출결 테이블에 없으면 불참 처리
      **/
-    @Scheduled(cron = "0 * * * * ?") //"0 0 0/1 * * *"
+    @Scheduled(cron = "0 0 0/1 * * *") // 테스트용 : 0 * * * * ?
     public void updateAbsentStudyMember() {
         LocalTime now = LocalTime.now();
         LocalDate target;
