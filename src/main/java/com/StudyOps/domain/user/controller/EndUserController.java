@@ -1,6 +1,5 @@
 package com.StudyOps.domain.user.controller;
 
-import com.StudyOps.domain.user.dto.EndUserEmailAndImageDto;
 import com.StudyOps.domain.user.dto.EndUserInfoReqDto;
 import com.StudyOps.domain.user.dto.EndUserPasswordChangeDto;
 import com.StudyOps.domain.user.dto.EndUserResponseDto;
@@ -21,9 +20,9 @@ public class EndUserController {
     private final EndUserService endUserService;
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<EndUserEmailAndImageDto>> findEndUserInfoById(){
+    public ResponseEntity<ApiResponse<EndUserResponseDto>> findEndUserInfoById(){
 
-        ApiResponse<EndUserEmailAndImageDto> successResponse = new ApiResponse<>(CURRENT_USER_GET_SUCCESS,endUserService.findEndUserInfoById(SecurityUtil.getCurrentMemberId()));
+        ApiResponse<EndUserResponseDto> successResponse = new ApiResponse<>(CURRENT_USER_GET_SUCCESS,endUserService.findEndUserInfoById(SecurityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
     @GetMapping("/me/{email}")

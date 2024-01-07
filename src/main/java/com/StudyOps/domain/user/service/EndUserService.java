@@ -2,7 +2,6 @@ package com.StudyOps.domain.user.service;
 
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
-import com.StudyOps.domain.user.dto.EndUserEmailAndImageDto;
 import com.StudyOps.domain.user.dto.EndUserInfoReqDto;
 import com.StudyOps.domain.user.dto.EndUserPasswordChangeDto;
 import com.StudyOps.domain.user.dto.EndUserResponseDto;
@@ -25,12 +24,13 @@ public class EndUserService {
     private final StudyMemberRepository studyMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public EndUserEmailAndImageDto findEndUserInfoById(Long endUserId) {
+    public EndUserResponseDto findEndUserInfoById(Long endUserId) {
         EndUser endUser = endUserRepository.findById(endUserId).get();
 
-        return EndUserEmailAndImageDto.builder()
+        return EndUserResponseDto.builder()
                 .email(endUser.getEmail())
                 .profileImageUrl(endUser.getProfileImageUrl())
+                .nickName(endUser.getNickname())
                 .build();
     }
 
