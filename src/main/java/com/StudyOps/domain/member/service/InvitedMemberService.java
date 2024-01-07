@@ -11,8 +11,10 @@ import com.StudyOps.domain.schedule.dto.StudyScheduleDto;
 import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
+import com.StudyOps.global.common.exception.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,15 +41,17 @@ public class InvitedMemberService {
         //스트림과 맵을 활용하여 리스트 invitees에 있는 닉네임을 userRepository에서 조회후 invitedMember로 디비에 등록한다.
         invitees.stream()
                 .map(nickname -> {
-                    EndUser findEndUser = endUserRepository.findByNickname(nickname).get();
+                    EndUser findEndUser = endUserRepository.findByNickname(nickname)
+                            .orElseThrow(() -> new CustomRuntimeException("존재하지 않는 닉네임이 포함되어 있습니다.", HttpStatus.BAD_REQUEST));
                     InvitedMember invitedMember = InvitedMember.builder()
                             .endUser(findEndUser)
-                            .studyGroup(studyGroupRepository.findById(groupId).get())
+                            .studyGroup(studyGroupRepository.findById(groupId).orElse(null))
                             .acceptStatus(AcceptStatus.WAIT)
                             .build();
                     return invitedMember;
                 })
                 .forEach(invitedMemberRepository::save);
+
     }
 
     public void acceptInvitedStudyGroup(Long groupId, Long userId) {
