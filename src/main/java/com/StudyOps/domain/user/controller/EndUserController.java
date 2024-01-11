@@ -2,14 +2,19 @@ package com.StudyOps.domain.user.controller;
 
 import com.StudyOps.domain.user.dto.EndUserInfoReqDto;
 import com.StudyOps.domain.user.dto.EndUserPasswordChangeDto;
+import com.StudyOps.domain.user.dto.EndUserProfileImageDto;
 import com.StudyOps.domain.user.dto.EndUserResponseDto;
 import com.StudyOps.domain.user.service.EndUserService;
 import com.StudyOps.global.common.ApiResponse;
+import com.StudyOps.s3.service.S3Service;
 import com.StudyOps.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static com.StudyOps.global.common.ApiResponseStatus.*;
 
@@ -18,6 +23,7 @@ import static com.StudyOps.global.common.ApiResponseStatus.*;
 @RequestMapping("/api/users")
 public class EndUserController {
     private final EndUserService endUserService;
+    private final S3Service s3Service;
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<EndUserResponseDto>> findEndUserInfoById(){
@@ -45,5 +51,11 @@ public class EndUserController {
         ApiResponse<Object> successResponse = new ApiResponse<>(CHANGE_END_USER_INFO_SUCCESS);
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
-
+    @PatchMapping("me/images")
+    public ResponseEntity<ApiResponse<EndUserProfileImageDto>> changeEndUserProfileImage(@RequestPart(value = "profileImage") MultipartFile multipartFile) throws IOException {
+        String url = s3Service.upload(multipartFile, "images");
+        endUserService.changeEndUserProfileImage(url,SecurityUtil.getCurrentMemberId());
+        ApiResponse<EndUserProfileImageDto> successResponse = new ApiResponse<>(CHANGE_END_USER_PROFILE_IMAGE_SUCCESS,EndUserProfileImageDto.builder().profileImageUrl(url).build());
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
 }

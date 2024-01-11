@@ -66,4 +66,10 @@ public class EndUserService {
             }
         }
     }
+
+    public void changeEndUserProfileImage(String url, Long userId) {
+        EndUser endUser = endUserRepository.findById(userId).get();
+
+
+    }
 }

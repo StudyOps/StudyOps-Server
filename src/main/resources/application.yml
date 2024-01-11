@@ -12,6 +12,10 @@ spring:
       hibernate:
         format_sql: true
     database: mysql
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 springdoc:
   swagger-ui:
@@ -24,10 +28,10 @@ springdoc:
 cloud:
   aws:
     s3:
-      bucket:
+      bucket: studyops
     credentials:
-      access-key: AKIAZI2LD4I3HBKDVDDZ
-      secret-key: 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
+      access-key: AKIAZI2LD4I3J2KLPQGI
+      secret-key: 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
     region:
       static: ap-northeast-2
       auto: false

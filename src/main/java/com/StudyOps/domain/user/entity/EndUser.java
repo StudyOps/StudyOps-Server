@@ -33,5 +33,8 @@ public class EndUser {
     public void changeNickName(String newNickName){
         this.nickname =newNickName;
     }
+    public void changeProfileImageUrl(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
 
 }

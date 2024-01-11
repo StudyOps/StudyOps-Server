@@ -38,7 +38,8 @@ public enum ApiResponseStatus {
     CURRENT_USER_GET_SUCCESS(true,200, "현재 로그인 중인 이용자 정보 조회에 성공하였습니다."),
     All_USER_INFO_GET_SUCCESS(true,200,"유저 정보 조회에 성공하였습니다."),
     CHANGE_PASSWORD_SUCCESS(true,200,"비밀번호 변경에 성공하였습니다."),
-    CHANGE_END_USER_INFO_SUCCESS(true,200,"사용자 정보 변경에 성공하였습니다.");
+    CHANGE_END_USER_INFO_SUCCESS(true,200,"사용자 정보 변경에 성공하였습니다."),
+    CHANGE_END_USER_PROFILE_IMAGE_SUCCESS(true,200,"사용자 프로필 이미지 변경에 성공하였습니다.");
     private final boolean isSuccess;
     private final int status;
     private final String message;
