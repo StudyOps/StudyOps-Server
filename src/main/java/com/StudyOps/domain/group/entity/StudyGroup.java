@@ -25,7 +25,7 @@ public class StudyGroup {
     private String name;
     private String intro;
 
-    @Column(length = 50000)
+    @Column(columnDefinition = "LONGTEXT")
     private String rule;
     private int absentCost;
     private int lateCost;

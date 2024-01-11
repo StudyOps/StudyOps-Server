@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/StudyOps
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://studyops.clokkku2sofz.ap-northeast-2.rds.amazonaws.com:3306/StudyOpsDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 054503ck!!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -12,6 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    database: mysql
 
 springdoc:
   swagger-ui:
@@ -21,8 +22,26 @@ springdoc:
   show-actuator: true
   default-produces-media-type: application/json
 
-logging.level:
-  org.hibernate.SQL: debug
+cloud:
+  aws:
+    s3:
+      bucket: studyops # {버킷명}
+    credentials:
+      access-key: AKIAZI2LD4I3HBKDVDDZ
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
