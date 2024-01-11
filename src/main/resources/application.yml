@@ -1,14 +1,13 @@
 spring:
   datasource:
-    url: jdbc:mysql://studyops.clokkku2sofz.ap-northeast-2.rds.amazonaws.com:3306/StudyOpsDB?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://studyops-1.cxy84ya2si8c.ap-southeast-2.rds.amazonaws.com:3306/studyops?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: 054503ck!!
+    password: merongxp
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
-      #hbm2ddl.auto: update
-      ddl-auto: create
+      hbm2ddl.auto: update
+      #ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -25,7 +24,7 @@ springdoc:
 cloud:
   aws:
     s3:
-      bucket: studyops # {버킷명}
+      bucket:
     credentials:
       access-key: AKIAZI2LD4I3HBKDVDDZ
       secret-key: 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
