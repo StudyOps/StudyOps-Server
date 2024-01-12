@@ -1,5 +1,6 @@
 package com.StudyOps.domain.post.controller;
 
+import com.StudyOps.domain.post.dto.StudyPostClickDto;
 import com.StudyOps.domain.post.dto.StudyPostReqDto;
 import com.StudyOps.domain.post.dto.StudyPostResDto;
 import com.StudyOps.domain.post.service.StudyPostService;
@@ -19,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.StudyOps.global.common.ApiResponseStatus.GET_POST_LIST_SUCCESS;
+import static com.StudyOps.global.common.ApiResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,8 +43,8 @@ public class StudyPostController {
                 String url = s3Service.upload(file, "posts/files");
                 // 받아온 URL을 리스트에 추가
                 urls.add(url);
-                studyPostService.createPostWithFiles(groupId, SecurityUtil.getCurrentMemberId(), studyPostReqDto, urls);
             }
+            studyPostService.createPostWithFiles(groupId, SecurityUtil.getCurrentMemberId(), studyPostReqDto, urls);
         }
         else
             studyPostService.createPost(groupId, SecurityUtil.getCurrentMemberId(),studyPostReqDto);
@@ -53,7 +54,20 @@ public class StudyPostController {
     @GetMapping("/posts/{groupId}")
     public ResponseEntity<ApiResponse<StudyPostResDto>> getPostList(@PageableDefault(size = 10) Pageable pageable, @PathVariable Long groupId){
 
-        ApiResponse<StudyPostResDto> successResponse = new ApiResponse<>(GET_POST_LIST_SUCCESS,studyPostService.getPostList(pageable,groupId));
+        ApiResponse<StudyPostResDto> successResponse = new ApiResponse<>(GET_POST_LIST_SUCCESS, studyPostService.getPostList(pageable,groupId));
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+    @GetMapping("/posts/specific/{postId}")
+    public ResponseEntity<ApiResponse<StudyPostClickDto>> getClickPost(@PathVariable(value = "postId") Long postId){
+
+        ApiResponse<StudyPostClickDto> successResponse = new ApiResponse<>(GET_CLICK_POST_SUCCESS, studyPostService.getClickPost(postId));
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    }
+    @DeleteMapping("/posts/specific/{postId}")
+    public ResponseEntity<ApiResponse<Object>> deletePost(@PathVariable(value = "postId") Long postId){
+
+        studyPostService.deletePost(postId);
+        ApiResponse<Object> successResponse = new ApiResponse<>(DELETE_POST_SUCCESS);
         return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 }

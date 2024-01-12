@@ -4,6 +4,7 @@ import com.StudyOps.domain.group.entity.StudyGroup;
 import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
+import com.StudyOps.domain.post.dto.StudyPostClickDto;
 import com.StudyOps.domain.post.dto.StudyPostReqDto;
 import com.StudyOps.domain.post.dto.StudyPostDto;
 import com.StudyOps.domain.post.dto.StudyPostResDto;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +37,7 @@ public class StudyPostService {
     private final StudyPostRepository studyPostRepository;
     private final StudyPostFileRepository studyPostFileRepository;
 
-    public Long createPost(Long groupId, Long userId, StudyPostReqDto studyPostReqDto) {
+    public StudyPost createPost(Long groupId, Long userId, StudyPostReqDto studyPostReqDto) {
         EndUser user = endUserRepository.findById(userId).get();
         StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
         StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup,user).get();
@@ -46,10 +48,10 @@ public class StudyPostService {
                 .title(studyPostReqDto.getTitle())
                 .contents(studyPostReqDto.getContents())
                 .date(LocalDate.now())
-                .build()).getId();
+                .build());
     }
     public void createPostWithFiles(Long groupId, Long userId, StudyPostReqDto studyPostReqDto, List<String> urls) {
-        StudyPost studyPost = studyPostRepository.findById(createPost(groupId, userId, studyPostReqDto)).get();
+        StudyPost studyPost = createPost(groupId, userId, studyPostReqDto);
         for(String url : urls){
             studyPostFileRepository.save(StudyPostFile.builder()
                     .studyPost(studyPost)
@@ -74,7 +76,35 @@ public class StudyPostService {
                 .postId(studyPost.getId())
                 .title(studyPost.getTitle())
                 .writer(studyPost.getStudyMember().getEndUser().getNickname())
+                .email(studyPost.getStudyMember().getEndUser().getEmail())
                 .date(studyPost.getDate())
                 .build();
+    }
+
+    public StudyPostClickDto getClickPost(Long postId) {
+        List<String> urls = new ArrayList<>();
+
+        StudyPost studyPost = studyPostRepository.findById(postId).get();
+        List<StudyPostFile> studyPostFiles = studyPostFileRepository.findAllByStudyPost(studyPost);
+        for(StudyPostFile studyPostFile :studyPostFiles){
+            urls.add(studyPostFile.getUrl());
+        }
+        return StudyPostClickDto.builder()
+                .urls(urls)
+                .writer(studyPost.getStudyMember().getEndUser().getNickname())
+                .email(studyPost.getStudyMember().getEndUser().getEmail())
+                .contents(studyPost.getContents())
+                .title(studyPost.getTitle())
+                .date(studyPost.getDate())
+                .build();
+    }
+
+    public void deletePost(Long postId) {
+        StudyPost studyPost = studyPostRepository.findById(postId).get();
+        List<StudyPostFile> studyPostFiles = studyPostFileRepository.findAllByStudyPost(studyPost);
+        for(StudyPostFile studyPostFile :studyPostFiles){
+            studyPostFileRepository.delete(studyPostFile);
+        }
+        studyPostRepository.delete(studyPost);
     }
 }
