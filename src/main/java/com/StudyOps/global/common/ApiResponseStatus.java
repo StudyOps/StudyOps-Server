@@ -40,7 +40,8 @@ public enum ApiResponseStatus {
     CHANGE_PASSWORD_SUCCESS(true,200,"비밀번호 변경에 성공하였습니다."),
     CHANGE_END_USER_INFO_SUCCESS(true,200,"사용자 정보 변경에 성공하였습니다."),
     CHANGE_END_USER_PROFILE_IMAGE_SUCCESS(true,200,"사용자 프로필 이미지 변경에 성공하였습니다."),
-    CREATE_STUDY_POST_SUCCESS(true, 200, "게시글 생성에 성공하였습니다.");
+    CREATE_STUDY_POST_SUCCESS(true, 200, "게시글 생성에 성공하였습니다."),
+    GET_POST_LIST_SUCCESS(true,200,"게시글 조회에 성공하였습니다.");
     private final boolean isSuccess;
     private final int status;
     private final String message;

@@ -29,6 +29,5 @@ public class StudyPost {
     @Column(columnDefinition = "LONGTEXT")
     private String contents;
     private String title;
-    private String writer;
     private LocalDate date;
 }

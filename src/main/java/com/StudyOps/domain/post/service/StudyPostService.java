@@ -5,6 +5,8 @@ import com.StudyOps.domain.group.repository.StudyGroupRepository;
 import com.StudyOps.domain.member.entity.StudyMember;
 import com.StudyOps.domain.member.repository.StudyMemberRepository;
 import com.StudyOps.domain.post.dto.StudyPostReqDto;
+import com.StudyOps.domain.post.dto.StudyPostDto;
+import com.StudyOps.domain.post.dto.StudyPostResDto;
 import com.StudyOps.domain.post.entity.StudyPost;
 import com.StudyOps.domain.post.entity.StudyPostFile;
 import com.StudyOps.domain.post.repository.StudyPostFileRepository;
@@ -13,17 +15,20 @@ import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class StudyBoardService {
+public class StudyPostService {
     private final StudyMemberRepository studyMemberRepository;
     private final EndUserRepository endUserRepository;
     private final StudyGroupRepository studyGroupRepository;
@@ -40,7 +45,6 @@ public class StudyBoardService {
                 .studyGroup(studyGroup)
                 .title(studyPostReqDto.getTitle())
                 .contents(studyPostReqDto.getContents())
-                .writer(user.getNickname())
                 .date(LocalDate.now())
                 .build()).getId();
     }
@@ -52,5 +56,25 @@ public class StudyBoardService {
                     .url(url)
                     .build());
         }
+    }
+    public StudyPostResDto getPostList(Pageable pageable, Long groupId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        Page<StudyPost> posts = studyPostRepository.findAllByStudyGroupOrderByIdDesc(pageable, studyGroup);
+
+        return  StudyPostResDto.builder()
+                .studyPostDtoList(posts.getContent().stream()
+                                .map(this::convertToDto)
+                                .collect(Collectors.toList()))
+                .total(studyPostRepository.countStudyPostByStudyGroup(studyGroup))
+                .build();
+
+    }
+    private StudyPostDto convertToDto(StudyPost studyPost) {
+        return StudyPostDto.builder()
+                .postId(studyPost.getId())
+                .title(studyPost.getTitle())
+                .writer(studyPost.getStudyMember().getEndUser().getNickname())
+                .date(studyPost.getDate())
+                .build();
     }
 }
