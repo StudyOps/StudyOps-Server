@@ -16,8 +16,10 @@ import com.StudyOps.domain.schedule.repository.StudyScheduleRepository;
 import com.StudyOps.domain.schedule.service.StudyScheduleService;
 import com.StudyOps.domain.user.entity.EndUser;
 import com.StudyOps.domain.user.repository.EndUserRepository;
+import com.StudyOps.global.common.exception.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,9 +143,12 @@ public class StudyGroupService {
     }
 
     public StudyGroupInfoResDto getStudyGroupInfo(Long groupId, Long userId) {
-        StudyGroup studyGroup = studyGroupRepository.findById(groupId).get();
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomRuntimeException("존재하지 않는 그룹입니다.", HttpStatus.BAD_REQUEST));
+
         EndUser endUser = endUserRepository.findById(userId).get();
-        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup,endUser).get();
+        StudyMember studyMember = studyMemberRepository.findByStudyGroupAndEndUser(studyGroup,endUser)
+                .orElseThrow(() -> new CustomRuntimeException("가입되지 않은 그룹입니다.", HttpStatus.UNAUTHORIZED));
         List<StudyMember> memberList = studyMemberRepository.findAllByStudyGroup(studyGroup);
         List<String> members = new ArrayList<>();
 

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-
 public interface StudyAttendanceRepository extends JpaRepository<StudyAttendance, Long> {
     List<StudyAttendance> findAllByStudyMember(StudyMember studyMember);
 
